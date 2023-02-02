@@ -1,0 +1,115 @@
+﻿@using Fire.Business.Encryption
+@model AllLayoutViewModel
+@{
+    ViewData["Title"] = "List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="main-panel">
+    <div class="content-wrapper">
+        <div class="row">
+            <div class="col-lg-12 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Fabrikalar</h4>
+                        <input type="text" class="form-control" id="txtsearch" placeholder="Fabrika Giriniz">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>İsim</th>
+                                        <th>Telefon</th>
+                                        <th></th>
+
+                                    </tr>
+                                    @foreach (var customer in Model.Factories)
+                                    {
+                                        <tr class="Search">
+                                            <td>@customer.name</td>
+                                            <td>@customer.Phone</td>
+                                            <td style="text-align:right">
+                                                <a href="/Factory/GetBeforeReceiptByFactoryid/@CommondMethod.ConvertToEncrypt(@customer.id.ToString())" name="id" class="btn-sm btn btn-inverse-success btn-fw">Fişler</a>
+                                                <a href="/Factory/FactoryReceptAddByFactoryid/@CommondMethod.ConvertToEncrypt(@customer.id.ToString())" name="id" class="btn-sm btn btn-inverse-info btn-fw">Yeni Fiş</a>
+                                                <a href="/Factory/Update/@CommondMethod.ConvertToEncrypt(@customer.id.ToString())" name="id" class="btn-sm btn btn-inverse-warning btn-fw">Güncelle</a>
+                                                <a href="/Check/Add/@CommondMethod.ConvertToEncrypt(@customer.id.ToString()+","+"false")" name="id" class="btn btn-inverse-primary btn-fw btn-sm">Yeni Çek</a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer class="footer">
+        <div class="d-sm-flex justify-content-center justify-content-sm-between">
+            <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Tüm Haklar Saklıdır. © 2023</span>
+            <!-- <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">  <a href="https://www.bootstrapdash.com/bootstrap-admin-template/" target="_blank">Bootstrap admin templates</a> from Bootstrapdash.com</span> -->
+        </div>
+    </footer>
+</div>
+
+
+
+
+
+@*<div class="row">
+
+    <center>
+        <header class="page-header">
+            <input type="text" id="txtsearch" placeholder="Fabrika Giriniz" />
+        </header>
+
+        <hr />
+
+
+        <table class="table table-bordered">
+            <tr>
+                <td>İsim</td>
+                <td>Telefon</td>
+                <td></td>
+            </tr>
+            @foreach (var customer in Model.Factories)
+            {
+                <tr class="Search">
+                    <td>@customer.name</td>
+                    <td>@customer.Phone</td>
+                    <td style="text-align:right">
+                        <a href="/Factory/GetBeforeReceiptByFactoryid/@CommondMethod.ConvertToEncrypt(@customer.id.ToString())" name="id" class="btn-sm btn-success" style="margin-right:6px !important;" title="Edit">Fişler</a>
+                        <a href="/Factory/FactoryReceptAddByFactoryid/@CommondMethod.ConvertToEncrypt(@customer.id.ToString())" name="factoryid" class="btn-sm btn-info" style="margin-right:6px !important;" title="Edit">Yeni Fiş</a>
+                        <a href="/Factory/Update/@CommondMethod.ConvertToEncrypt(@customer.id.ToString())" name="id" class="btn-sm btn-warning" style="margin-right:6px !important;" title="Edit">Güncelle</a>
+                        <a href="/Check/Add/@CommondMethod.ConvertToEncrypt(@customer.id.ToString()+","+"false")" name="id" class="btn-success btn-sm" style="margin-right:6px !important;" title="Çek">Yeni Çek</a>
+                    </td>
+                </tr>
+            }
+        </table>
+    </center>
+</div>*@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+
+<script>
+    $(document).ready(function() {
+        function Contains(text_one, text_two) {
+            if (text_one.indexOf(text_two) != -1)
+                return true;
+        }
+        $("#txtsearch").keyup(function() {
+            var searchtext = $("#txtsearch").val().toLowerCase();
+            $(".Search").each(function() {
+                if (!Contains($(this).text().toLowerCase(), searchtext)) {
+                    $(this).hide();
+                }
+                else {
+                    $(this).show();
+                }
+            })
+        })
+    })
+
+</script>
+

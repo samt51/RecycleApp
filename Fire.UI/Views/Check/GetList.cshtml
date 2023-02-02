@@ -1,0 +1,122 @@
+﻿@using Fire.UI.Models.AllViewModels
+@model AllLayoutViewModel
+@{
+    ViewData["Title"] = "GetList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<head>
+    <style>
+        .whiteColor {
+            color: white !important;
+        }
+    </style>
+</head>
+
+<div class="main-panel">
+    <div class="content-wrapper">
+        <div class="row">
+            <div class="col-lg-12 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Çekler</h4>
+                        <input type="text" class="form-control" id="txtsearch" placeholder="Çek">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <td class="whiteColor">Serial Numara</td>
+                                        <td class="whiteColor">Banka</td>
+                                        <td class="whiteColor">Tutar</td>
+                                        <td class="whiteColor">Ödeme Tarihi</td>
+                                        <td class="whiteColor">Kimden Alındı</td>
+                                        <td class="whiteColor">Kime Verildi</td>
+                                        <td class="whiteColor">Şube</td>
+
+                                    </tr>
+                                    @foreach (var customer in ViewBag.results)
+                                    {
+                                        <tr class="Search">
+                                            <td class="whiteColor">@customer.checkNumber</td>
+                                            <td class="whiteColor">@Functions.bankname(customer.bankid)</td>
+                                            <td><input type="text" name="currency-field" value="@customer.price" placeholder="₺1,000,000.00" disabled="disabled"></td>
+                                            <td class="whiteColor">@customer.checkDate.ToString("dd-MM-yyyy")</td>
+                                            @if (@customer.branchid == customer.whoFromGetted)
+                                            {
+                                                <td class="whiteColor">@Functions.branchname(customer.branchid,Convert.ToInt32(Model.TokenKeys.companyId))</td>
+                                            }
+                                            else
+                                            {
+                                                <td class="whiteColor">@Functions.FactoryName(customer.whoFromGetted,customer.IsWhat)</td>
+                                            }
+
+                                            <td class="whiteColor">@Functions.CustomerName(customer.toWhoWasGiven)</td>
+                                            <td class="whiteColor">@Functions.branchname(customer.branchid,Convert.ToInt32(Model.TokenKeys.companyId))</td>
+                                        </tr>
+                                    }
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer class="footer">
+        <div class="d-sm-flex justify-content-center justify-content-sm-between">
+            <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Tüm Haklar Saklıdır. © 2023</span>
+            <!-- <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">  <a href="https://www.bootstrapdash.com/bootstrap-admin-template/" target="_blank">Bootstrap admin templates</a> from Bootstrapdash.com</span> -->
+        </div>
+    </footer>
+</div>
+
+
+
+
+
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/snippets/javascript.min.js"></script>
+<script src="/lib/jquery/dist/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+
+    var totalPrice2 = document.getElementsByName('currency-field');
+    for (var j = 0; j < totalPrice2.length; j++) {
+        totalPrice2[j].value = formatMyMoney(totalPrice2[j].value) + " " + "₺";
+    }
+
+    $(document).ready(function() {
+        function Contains(text_one, text_two) {
+            if (text_one.indexOf(text_two) != -1)
+                return true;
+        }
+        $("#txtsearch").keyup(function() {
+            var searchtext = $("#txtsearch").val().toLowerCase();
+            $(".Search").each(function() {
+                if (!Contains($(this).text().toLowerCase(), searchtext)) {
+                    $(this).hide();
+                }
+                else {
+                    $(this).show();
+                }
+            })
+        })
+    })
+
+
+    function formatMyMoney(price) {
+
+        var currency_symbol = "₺"
+
+        var formattedOutput = new Intl.NumberFormat('tr-TR', {
+            style: 'currency',
+            currency: 'TRY',
+            minimumFractionDigits: 2,
+        });
+
+        return formattedOutput.format(price).replace(currency_symbol, '')
+    }
+</script>

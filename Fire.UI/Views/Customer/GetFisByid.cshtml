@@ -1,0 +1,290 @@
+﻿@model AllLayoutViewModel
+@{
+    ViewData["Title"] = "GetFisByid";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<head>
+    <style>
+        #quantity {
+            display: none
+        }
+
+        #date {
+            display: none
+        }
+    </style>
+</head>
+
+
+
+
+
+<div class="main-panel">
+    <div class="content-wrapper">
+        <div class="page-header">
+
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                </ol>
+            </nav>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        @if (ViewBag.error != null)
+                        {
+                            <span class="text-danger">@ViewBag.error</span>
+                        }
+                        <h4 class="card-title">Fiş Ekleme</h4>
+
+
+
+                        <form asp-controller="ProductType" asp-action="ReceiptUpdate" class="forms-sample">
+                            <span>Toplam Tutar : </span> <input type="text" name="currency-field" id="currency-field" value="@ViewBag.totalprice" disabled="disabled" placeholder="₺1,000,000.00">
+                            <button type="submit" class="btn btn-primary btn-rounded btn-fw btn-sm"> Güncelle</button>
+                            <input type="text" id="quantity" name="quan" value="@ViewBag.quantity" />
+                            <input type="text" id="date" name="datetime" value="@ViewBag.date" />
+                            <div class="table-responsive">
+                                <table id="dtBasicExample3" class="">
+                                    <thead>
+                                        <tr class="Search" id="tablodoldurss">
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="Search" id="tablodoldaltt"></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer class="footer">
+        <div class="d-sm-flex justify-content-center justify-content-sm-between">
+            <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Tüm Haklar Saklıdır. © 2023</span>
+            <!-- <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">  <a href="https://www.bootstrapdash.com/bootstrap-admin-template/" target="_blank">Bootstrap admin templates</a> from Bootstrapdash.com</span> -->
+        </div>
+    </footer>
+</div>
+
+
+@*
+<div class="row">
+    <header class="page-header">
+    </header>
+    @if (ViewBag.error != null)
+    {
+        <span class="text-danger">@ViewBag.error</span>
+    }
+    <div class="col-lg-6 col-md-6">
+        <h5>
+            <span>Toplam Tutar : </span> <input type="text" name="currency-field" id="currency-field" value="@ViewBag.totalprice" placeholder="₺1,000,000.00">
+
+
+            <form asp-controller="ProductType" asp-action="ekle">
+                <input type="text" id="quantity" name="quan" value="@ViewBag.quantity" />
+                <input type="text" id="date" name="datetime" value="@ViewBag.date" />
+
+                <table id="dtBasicExample3" class="table table-striped table-bordered"
+                       cellspacing="0" style="text-align:center">
+                    <thead>
+                        <tr class="Search" id="tablodoldurss">
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="Search" id="tablodoldaltt"></tr>
+                    </tbody>
+                </table>
+            </form>
+    </div>
+</div>
+*@
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/snippets/javascript.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+<script src="/lib/jquery/dist/jquery.min.js"></script>
+
+<script>
+
+    //05379597551
+
+
+
+    //$(document).ready(function() {
+    //    $('#tablodoldaltt').show();
+    //    $('#tablodoldurss').show();
+    //    $.ajax({
+    //        type: 'GET',
+    //        url: '/ProductType/GetAll',
+    //        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+    //        data: "",
+    //        success: function(data) {
+    //            var gelendegerler;
+    //            var Adth = '<th>#</th>';
+    //            var inputth = '<th>#</th>';
+    //            for (var i = 0; i < data.length; i++) {
+    //                Adth += '<th style="min-width:73px;">' + data[i]["name"] + '</th>';
+    //                var requestData = { typeid: data[i]["id"] };
+    //                $.ajax({
+    //                    type: 'GET',
+    //                    url: '/Customer/GetQuantityByTypeid',
+    //                    contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+    //                    data: requestData,
+    //                    success: function(data) {
+    //                        var totalvalue = 0;
+    //                        var totalprice = 0;
+    //                        inputth += '<th >';
+    //                        for (var j = 0; j < data.length; j++) {
+    //                            totalvalue += data[j]["kg"]
+    //                            totalprice += data[j]["totalprice"]
+    //                            inputth += '<input style="text-align:center"  value="' + data[j]["kg"] + '"  name="' + data[j] + '_' + j + '" type="text" disabled="disabled"  form-control calcdata" >';
+    //                        }
+    //                        inputth += '<input style="text-align:center"  value="' + totalvalue + '"  name="' + data[j] + '_' + j + '" type="text" disabled="disabled"  form-control calcdata" >';
+    //                        inputth += '</th>';
+    //                        $("#tablodoldurss").html(Adth);
+    //                        $("#tablodoldaltt").html(inputth);
+    //                    },
+    //                    error: function() {
+    //                        alert('Failed to receive the Data');
+    //                        console.log('Failed ');
+    //                    }
+    //                });
+    //            }
+    //        },
+    //        error: function() {
+    //            alert('Failed to receive the Data');
+    //            console.log('Failed ');
+    //        }
+    //    })
+    //});
+</script>
+
+
+<script>
+    var value;
+    var val;
+    var res;
+    value = document.getElementById('quantity').value;
+    val = document.getElementById('date').value;
+    res = value + ',' + val;
+    console.log(res);
+    var requestData = { quantity: res };
+    var totalPrice2 = document.getElementById('currency-field').value;
+    document.getElementById('currency-field').value = formatMyMoney(totalPrice2) + " " + "₺";
+
+    $(document).ready(function() {
+        $('#tablodoldaltt').show();
+        $('#tablodoldurss').show();
+        $.ajax({
+            type: 'POST',
+            url: '/Customer/Deneme',
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            data: requestData,
+            success: function(data) {
+                var gelendegerler;
+                var Adth = '<th>#</th>';
+                var inputth = '<th>#</th>';
+
+
+                for (var i = 0; i < data.length; i++) {
+
+
+                    Adth += '<th style="min-width:73px;">' + data[i]["name"] + '</th>';
+
+                    var totalvalue = 0;
+                    var totalprice = 0;
+                    inputth += '<th >';
+
+                    var pr = Number(data[i]["total"]).toFixed(2);
+                    console.log(pr);
+                    //inputth += '<span>Tutar : </span><input style="text-align:center"  value="' + data[i]["total"] + '" name="currency-field" id="currency-field"  type="text"  data-type="currency"  form-control calcdata" >';
+                    inputth += '<span>Tutar : </span> <input type="text" disabled="disabled" asp-format="{0:#,###.00}" value="' + formatMyMoney(pr) + " " + "₺" + '" placeholder="₺1,000,000.00">';
+                    inputth += '<span> <br> </span>';
+                    for (var j = 0; j < 50; j++) {
+                        //totalprice += data[i]["productQuantities"][j]["totalprice"]
+                        if (j == 0) {
+
+                            inputth += '<span>fiyat :</span><input style="text-align:center" class="giveMany" value="' + data[i]["price"] + '" name="' + data[i]["name"] + '_' + i + '" type="text" min="0" form-control calcdata" >';
+
+                            inputth += '<input style="text-align:center" value="" disabled="disabled" name="' + data[i]["name"] + '_' + i + '" type="text" min="0" form-control calcdata" >';
+                        }
+
+
+                        if (data[i]["productQuantities"].length > 0) {
+                            totalvalue += data[i]["productQuantities"][j]["kg"]
+                            inputth += '<input style="text-align:center"  value="' + data[i]["productQuantities"][j]["kg"] + '" class="giveMany"  name="' + data[i]["name"] + '_' + i + '" type="text" form-control calcdata" >';
+
+
+                        } else {
+
+                            totalvalue += 0;
+                            inputth += '<input style="text-align:center"  value="' + 0 + '" class="giveMany"  name="' + data[i]["name"] + '_' + i + '" type="text" form-control calcdata" >';
+
+
+                        }
+
+
+                        //console.log([j]["kg"]);
+                    }
+                    inputth += '<span>Toplam Kg : </span><input style="text-align:center"  value="' + formatMyMoney(totalvalue) + '"  name="geneltoplam" type="text" disabled="disabled"  form-control calcdata" >';
+
+                    inputth += '</th>';
+                    $("#tablodoldurss").html(Adth);
+                    $("#tablodoldaltt").html(inputth);
+                    //document.getElementById('currency-field').value = totalprice;
+                }
+                //inputth += '<th><button type="submit" style="background-color:#96885a; color:white; " class="btn width-md waves-effect waves-light form-control"> Add +</button>    <span>Genel Toplam</span><input style="text-align:center" value="0" name="geneltoplam"  id="geneltoplam" type="text" disabled="disabled"  form-control calcdata" ></th>';
+                $("#tablodoldaltt").html(inputth);
+            },
+            error: function() {
+                alert('Failed to receive the Data');
+                console.log('Failed ');
+            }
+        })
+    });
+
+    function formatMyMoney(price) {
+
+        var currency_symbol = "₺"
+
+        var formattedOutput = new Intl.NumberFormat('tr-TR', {
+            style: 'currency',
+            currency: 'TRY',
+            minimumFractionDigits: 2,
+        });
+
+        return formattedOutput.format(price).replace(currency_symbol, '')
+    }
+    $(document).ready(function() {
+        $("input").keyup(function(event) {
+
+            if (event.which >= 37 && event.which <= 40) {
+                event.preventDefault();
+            }
+
+            $(this).val(function(index, value) {
+                return value
+
+                    .replace(",", ".") ;
+            });
+        });
+    });
+</script>
+
+
+
+
+
+
+

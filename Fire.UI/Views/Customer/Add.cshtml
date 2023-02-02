@@ -1,0 +1,42 @@
+﻿@model AllLayoutViewModel
+@{
+    ViewData["Title"] = "Add";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<div class="main-panel">
+    <div class="content-wrapper">
+        <div class="row">
+            <div class="col-md-6 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Müşteri Ekleme</h4>
+                        <form asp-controller="Customer" asp-action="Add" name="formadd" method="post" enctype="multipart/form-data" class="forms-sample">
+                            <div class="form-group">
+                                <label for="exampleInputUsername1">Ad</label>
+                                <input type="text" class="form-control" placeholder="İsim" asp-for="CustomerAdd.Name" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">Soyad</label>
+                                <input type="text" class="form-control" placeholder="Soyad" class="form-control" asp-for="CustomerAdd.Surname" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputPassword1">Telefon</label>
+                                <input type="text" class="form-control" placeholder="Telefon" id="unitPrice" asp-for="CustomerAdd.PhoneNumber" required />
+                            </div>
+                            <button type="submit" class="btn btn-primary mr-2">Ekle</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer class="footer">
+        <div class="d-sm-flex justify-content-center justify-content-sm-between">
+            <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Tüm Haklar Saklıdır. © 2023</span>
+            <!-- <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">  <a href="https://www.bootstrapdash.com/bootstrap-admin-template/" target="_blank">Bootstrap admin templates</a> from Bootstrapdash.com</span> -->
+        </div>
+    </footer>
+</div>

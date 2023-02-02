@@ -1,0 +1,51 @@
+﻿@model AllLayoutViewModel
+@{
+    ViewData["Title"] = "Add";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+ 
+<head>
+    <style>
+        .whiteColor {
+            color: white !important;
+        }
+    </style>
+</head>
+
+
+
+<div class="main-panel">
+    <div class="content-wrapper">
+        <div class="page-header">
+            <h3 class="page-title"> Banka Kaydet </h3>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                </ol>
+            </nav>
+        </div>
+
+        <div class="row">
+            <div class="col-12 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        @if (ViewBag.error != null)
+                        {
+                            <div class="alert-danger">@ViewBag.error</div>
+                        }
+                        <form asp-controller="Bank" asp-action="Add" name="formadd" method="post" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <label for="exampleInputName1">Banka</label>
+                                <input type="text" class="form-control whiteColor" placeholder="Banka" asp-for="bank.name" id="checkNo" required />
+                            </div>
+                            <button type="submit" class="btn btn-primary mr-2">Kaydet</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+ 

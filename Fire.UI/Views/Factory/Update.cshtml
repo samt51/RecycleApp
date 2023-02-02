@@ -1,0 +1,66 @@
+﻿@model AllLayoutViewModel
+@{
+    ViewData["Title"] = "Update";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@*<div class="row">
+    <header class="page-header">
+    </header>
+    <div class="col-lg-6 col-md-6">
+        <form asp-controller="Factory" asp-action="Update" name="formadd" method="post" enctype="multipart/form-data">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="control-label"> Fabrika isim</label>
+                        <input id="productName" class="form-control" type="text" asp-for="Factory.name" required />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="form-control-3">Telefon</label>
+                        <input id="unitPrice" class="form-control" asp-for="Factory.Phone" required />
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-10 offset-md-2">
+                            <button type="submit" id="btn1" class=" center-block btn btn-primary">Güncelle</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</div>*@
+
+
+
+<div class="main-panel">
+    <div class="content-wrapper">
+        <div class="row">
+            <div class="col-md-6 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Fabrika Güncelleme</h4>
+                        <form asp-controller="Factory" asp-action="Update" name="formadd" method="post" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <label for="exampleInputUsername1">Fabrika isim</label>
+                                <input type="text" class="form-control" placeholder="İsim" asp-for="Factory.name" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputPassword1">Telefon</label>
+                                <input type="text" class="form-control" placeholder="Telefon" id="unitPrice" asp-for="Factory.Phone" required />
+                            </div>
+                            <button type="submit" class="btn btn-primary mr-2">Güncelle</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer class="footer">
+        <div class="d-sm-flex justify-content-center justify-content-sm-between">
+            <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Tüm Haklar Saklıdır. © 2023</span>
+            <!-- <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">  <a href="https://www.bootstrapdash.com/bootstrap-admin-template/" target="_blank">Bootstrap admin templates</a> from Bootstrapdash.com</span> -->
+        </div>
+    </footer>
+</div>

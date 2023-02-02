@@ -1,0 +1,32 @@
+﻿@model AllLayoutViewModel
+@{
+    ViewData["Title"] = "AddProductWithCustomerid";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <header class="page-header">
+    </header>
+    <form asp-action="AddProductWithCustomerid" asp-controller="ProductType" method="post">
+        <table class="table table-bordered">
+            <tr>
+                <td>@Model.ProductType.Name @Model.ProductType.kgPrice</td>
+            </tr>
+
+            @for (var i = 0; i < 50; i++)
+            {
+                <tr>
+                    <td><input type="text" name="values[value]"></td>
+
+                </tr>
+            }
+
+        </table>
+        <div class="form-group row">
+            <div class="col-md-10 offset-md-2">
+                <button type="submit" id="btn1" class=" center-block btn btn-primary">Ekle</button>
+            </div>
+        </div>
+
+    </form>
+</div>

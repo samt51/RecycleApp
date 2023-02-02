@@ -1,0 +1,138 @@
+﻿@model AllLayoutViewModel
+@{
+    ViewData["Title"] = "FactoryReceptAddByFactoryid";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+
+<div class="main-panel">
+    <div class="content-wrapper">
+        <div class="page-header">
+
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                </ol>
+            </nav>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Fiş Ekleme</h4>
+                        @if (ViewBag.message != null)
+                        {
+                            <div class="alert-danger">@ViewBag.message</div>
+                        }
+
+                        <form asp-controller="Factory" asp-action="FactoryReceptAddByFactoryid" class="forms-sample">
+                            <span>Fiş Tarihi:</span><input type="date" asp-for="Factory.CreatedDate" />
+                            <button type="submit" class="btn btn-primary btn-rounded btn-fw btn-sm"> Kaydet</button>
+                            <div class="table-responsive">
+                                <table id="dtBasicExample3" class="">
+                                    <thead>
+                                        <tr class="Search" id="tablodoldurss">
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="Search" id="tablodoldaltt"></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer class="footer">
+        <div class="d-sm-flex justify-content-center justify-content-sm-between">
+            <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Tüm Haklar Saklıdır. © 2023</span>
+            <!-- <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">  <a href="https://www.bootstrapdash.com/bootstrap-admin-template/" target="_blank">Bootstrap admin templates</a> from Bootstrapdash.com</span> -->
+        </div>
+    </footer>
+</div>
+
+
+
+
+
+
+
+
+
+@*<div class="row">
+    <header class="page-header">
+        @if (ViewBag.message != null)
+        {
+            <div class="alert-danger">@ViewBag.message</div>
+        }
+
+    </header>
+    <div class="col-lg-6 col-md-6">
+
+        <form asp-controller="Factory" asp-action="FactoryReceptAddByFactoryid">
+            <span>Fiş Tarihi:</span><input type="date" asp-for="Factory.CreatedDate" />
+            <table id="dtBasicExample3" class="table table-striped table-bordered"
+                   cellspacing="0" style="text-align:center">
+                <thead>
+                    <tr class="odd" id="tablodoldurss"></tr>
+
+                </thead>
+                <tbody>
+                    <tr class="odd" id="tablodoldaltt"></tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+</div>*@
+
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/snippets/javascript.min.js"></script>
+<script src="/lib/jquery/dist/jquery.min.js"></script>
+
+
+<script>
+    $(document).ready(function() {
+        $('#tablodoldaltt').show();
+        $('#tablodoldurss').show();
+        $.ajax({
+            type: 'POST',
+            url: '/ProductType/deneme',
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            data: "",
+            success: function(data) {
+                var Adth = '<th>#</th>';
+                var inputth = '<th>#</th>';
+                var value = "";
+                var d = "";
+                console.log(data);
+                for (var i = 0; i < data.length; i++) {
+                    Adth += '<th style="min-width:73px;">' + data[i] + '</th>';
+                    value = data[i].split(',');
+                    inputth += '<th >';
+                    for (var j = 0; j < 50; j++) {
+
+                        if (j == 0) {
+                            inputth += '<span>fiyat :</span><input style="text-align:center" onkeyup="keyCapt(this)" onkeypress="isNumberKey(this)" value="0" name="' + data[i] + '_' + i + '" type="text" min="0" form-control calcdata" >';
+
+                            inputth += '<input style="text-align:center" onkeyup="keyCapt(this)" onkeypress="isNumberKey(this)" value="" disabled="disabled" name="' + data[i] + '_' + i + '" type="text" min="0" form-control calcdata" >';
+                        }
+
+                        inputth += '<input style="text-align:center" onkeyup="keyCapt(this)" onkeypress="isNumberKey(this)" value="0" name="' + data[i] + '_' + i + '" type="text" min="0" form-control calcdata" >';
+
+                    }
+                    inputth += '</th>';
+                }
+                //inputth += '<th><button type="submit" style="background-color:#96885a; color:white; " class="btn width-md waves-effect waves-light form-control"> Add +</button>    <span>Genel Toplam</span><input style="text-align:center" value="0" name="geneltoplam"  id="geneltoplam" type="text" disabled="disabled"  form-control calcdata" >  </th>';
+                $("#tablodoldurss").html(Adth);
+                $("#tablodoldaltt").html(inputth);
+            },
+            error: function() {
+                alert('Failed to receive the Data');
+                console.log('Failed ');
+            }
+        })
+    });
+</script>

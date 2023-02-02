@@ -1,0 +1,87 @@
+﻿@model AllLayoutViewModel
+@{
+    ViewData["Title"] = "Update";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+
+
+<div class="main-panel">
+    <div class="content-wrapper">
+        <div class="page-header">
+            <h3 class="page-title"> Çalışan Güncelleme </h3>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                </ol>
+            </nav>
+        </div>
+        <div class="row">
+            <div class="col-12 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        @if (ViewBag.error != null)
+                        {
+                            <div class="alert-danger">@ViewBag.error</div>
+                        }
+                        <form asp-controller="Employees" asp-action="Update" name="formadd" method="post" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <label for="exampleInputName1">Ad</label>
+                                <input type="text" class="form-control whiteColor" placeholder="İsim" asp-for="employees.Name" id="checkNo" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputName1">Soyad</label>
+                                <input type="text" class="form-control whiteColor" placeholder="Soyad" asp-for="employees.Surname" id="checkNo" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputName1">Maaş</label>
+                                <input type="text" class="form-control whiteColor" placeholder="Maaş" asp-for="employees.Salary" id="checkNo" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputName1">İşe Başlama Tarihi</label>
+                                <input type="date" asp-for="employees.CreatedDate" class="form-control whiteColor" placeholder="Başlangıç Tarihi" id="checkNo" required />
+                            </div>
+                            <button type="submit" class="btn btn-primary mr-2">Güncelle</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*<div class="row">
+    <header class="page-header">
+    </header>
+    <div class="col-lg-6 col-md-6">
+        <form asp-controller="Employees" asp-action="Update" name="formadd" method="post" enctype="multipart/form-data">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="control-label"> Ad</label>
+                        <input id="productName" class="form-control" type="text" asp-for="employees.Name" required />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="form-control-3">Soyad</label>
+                        <input id="unitPrice" class="form-control" asp-for="employees.Surname" required />
+                    </div>
+                        <div class="form-group">
+                        <label class="control-label" for="form-control-3">Maaş</label>
+                        <input id="unitPrice" class="form-control" type="text" asp-for="employees.Salary" required />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="form-control-3">İşe Başlama Tarihi</label>
+                        <input id="unitPrice" class="form-control" type="date" asp-for="employees.CreatedDate" disabled="disabled" />
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-10 offset-md-2">
+                            <button type="submit" id="btn1" class=" center-block btn btn-primary">Güncelle</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>*@
+

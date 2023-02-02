@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Fire.DataAccess\Fire.DataAccess.csproj" />
+    <ProjectReference Include="..\Fire.Entity\Fire.Entity.csproj" />
+  </ItemGroup>
+
+</Project>

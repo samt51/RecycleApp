@@ -1,0 +1,50 @@
+﻿@model AllLayoutViewModel
+@{
+    ViewData["Title"] = "AddFactory";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+ 
+
+<head>
+    <style>
+        .whiteColor {
+            color: white !important;
+        }
+    </style>
+</head>
+
+
+
+
+<div class="main-panel">
+    <div class="content-wrapper">
+        <div class="row">
+            <div class="col-md-6 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Fabrika Ekleme</h4>
+                        <form asp-controller="Factory" asp-action="AddFactory" name="formadd" method="post" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <label for="exampleInputUsername1">Fabrika isim</label>
+                                <input type="text" class="form-control whiteColor" placeholder="İsim" asp-for="Factory.name" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputPassword1">Telefon</label>
+                                <input type="text" class="form-control whiteColor" placeholder="Telefon" id="unitPrice" asp-for="Factory.Phone" required />
+                            </div>
+                            <button type="submit" class="btn btn-primary mr-2">Kaydet</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer class="footer">
+        <div class="d-sm-flex justify-content-center justify-content-sm-between">
+            <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Tüm Haklar Saklıdır. © 2023</span>
+            <!-- <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">  <a href="https://www.bootstrapdash.com/bootstrap-admin-template/" target="_blank">Bootstrap admin templates</a> from Bootstrapdash.com</span> -->
+        </div>
+    </footer>
+</div>
+

@@ -1,0 +1,79 @@
+﻿@model AllLayoutViewModel
+@{
+    ViewData["Title"] = "Deneme";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="row">
+    <header class="page-header">
+    </header>
+    <div class="col-lg-6 col-md-6">
+        <h5><span>Toplam Tutar</span> @ViewBag.totalMoney</h5>
+
+        <table id="dtBasicExample3" class="table table-striped table-bordered"
+               cellspacing="0" style="text-align:center">
+            <thead>
+                <tr class="odd" id="tablodoldurss">
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="odd" id="tablodoldaltt"></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/snippets/javascript.min.js"></script>
+<script src="/lib/jquery/dist/jquery.min.js"></script>
+<script>
+  
+    $(document).ready(function() {
+        $('#tablodoldaltt').show();
+        $('#tablodoldurss').show();
+        $.ajax({
+            type: 'GET',
+            url: '/ProductType/GetAll',
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            data: "",
+            success: function(data) {
+
+                var gelendegerler;
+                var Adth = '<th>#</th>';
+                var inputth = '<th>#</th>';
+                for (var i = 0; i < data.length; i++) {
+                    Adth += '<th style="min-width:73px;">' + data[i]["name"] + '</th>';
+                    var requestData = { typeid: data[i]["id"] };
+                    $.ajax({
+                        type: 'GET',
+                        url: '/Customer/GetQuantityByTypeid',
+                        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                        data: requestData,
+                        success: function(data) {
+                            var totalvalue = 0;
+                            var totalprice = 0;
+                            inputth += '<th >';
+                            for (var j = 0; j < data.length; j++) {
+                                totalvalue += data[j]["kg"]
+                                totalprice += data[j]["totalprice"]
+                                inputth += '<input style="text-align:center"  value="' + data[j]["kg"] + '"  name="' + data[j] + '_' + j + '" type="text" disabled="disabled"  form-control calcdata" >';
+                            }
+                            inputth += '<input style="text-align:center"  value="' + totalvalue + '"  name="' + data[j] + '_' + j + '" type="text" disabled="disabled"  form-control calcdata" >';
+                            inputth += '</th>';
+                            $("#tablodoldurss").html(Adth);
+                            $("#tablodoldaltt").html(inputth);
+                        },
+                        error: function() {
+                            alert('Failed to receive the Data');
+                            console.log('Failed ');
+                        }
+                    });
+                }
+            },
+            error: function() {
+                alert('Failed to receive the Data');
+                console.log('Failed ');
+            }
+        })
+    });
+</script>
+
+

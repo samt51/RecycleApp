@@ -1,0 +1,116 @@
+﻿@model AllLayoutViewModel
+@{
+    ViewData["Title"] = "Add";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<head>
+    <style>
+        .whiteColor {
+            color: white !important;
+        }
+    </style>
+</head>
+
+
+
+
+
+
+<div class="main-panel">
+    <div class="content-wrapper">
+        <div class="page-header">
+            <h3 class="page-title"> Çek Kaydet </h3>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                </ol>
+            </nav>
+        </div>
+
+        <div class="row">
+            <div class="col-12 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        @if (ViewBag.error != null)
+                        {
+                            <div class="alert-danger">@ViewBag.error</div>
+                        }
+                        else if (ViewBag.success != null)
+                        {
+                            <div class="alert-success">@ViewBag.success</div>
+                        }
+                        @*      <h4 class="card-title">Basic form elements</h4>
+                        <p class="card-description"> Basic form elements </p>*@
+                        <form asp-controller="Check" asp-action="Add" class="forms-sample" name="formadd" method="post" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <label for="exampleInputName1">Çek Numarası</label>
+                                <input type="text" class="form-control whiteColor" placeholder="Seri No" asp-for="check.checkNumber" id="checkNo" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputEmail3">Banka</label>
+                                @Html.DropDownListFor(x=>x.bank.id,(List<SelectListItem>)ViewBag.banklist,"Seç",new{@class="form-control whiteColor",@id="bank"})
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputPassword4">Miktarı</label>
+                                <input class="form-control whiteColor" placeholder="Miktarı" id="giveMany" type="text" asp-for="check.price" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputPassword4">Ödeme Tarihi</label>
+                                <input class="form-control whiteColor" placeholder="Tahsil Tarihi" id="unitPrice" type="date" asp-for="check.checkDate" required />
+                            </div>
+
+                            <button type="submit" class="btn btn-primary mr-2">Kaydet</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ 
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/snippets/javascript.min.js"></script>
+<script src="/lib/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
+
+
+<script>
+
+
+
+
+    $('#giveMany').keyup(function(event) {
+
+        // skip for arrow keys
+        if (event.which >= 37 && event.which <= 40) {
+            event.preventDefault();
+        }
+
+        $(this).val(function(index, value) {
+            return value
+                .replace(/\D/g, "")
+                .replace(/([0-9])([0-9]{2})$/, '$1.$2')
+                .replace(/\B(?=(\d{3})+(?!\d)\.?)/g, ",")
+                ;
+        });
+    });
+
+
+
+</script>
+<script type="text/javascript">
+
+
+</script>

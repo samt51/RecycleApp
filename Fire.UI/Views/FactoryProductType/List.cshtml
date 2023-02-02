@@ -1,0 +1,38 @@
+﻿@using Fire.Business.Encryption
+@model AllLayoutViewModel
+@{
+    ViewData["Title"] = "List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="row">
+    <header class="page-header">
+    </header>
+    <table class="table table-bordered">
+        <tr>
+            <td>Ürün</td>
+            <td>Fiyat</td>
+            <td></td>
+        </tr>
+        @foreach (var customer in Model.productTypes)
+        {
+            <tr>
+                <td>@customer.Name</td>
+                <td>@customer.kgPrice</td>
+
+
+
+                <td style="text-align:right">
+                   
+                    <a href="/ProductType/Update/@CommondMethod.ConvertToEncrypt(@customer.id.ToString())" name="id" class="btn btn-warning" style="margin-right:6px !important;" title="Edit">Güncelle</a>
+                    <form action="/ProductType/Delete" method="post" style="display:inline">
+                        <input type="hidden" name="id" value="@customer.id" />
+                        <button type="submit" class="btn-sm btn-danger" style="margin-right:6px !important;" data-type="confirm" title="Delete">Sil</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </table>
+
+
+</div>
+

@@ -1,0 +1,187 @@
+﻿@model AllLayoutViewModel
+@{
+    ViewData["Title"] = "Add";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+
+
+<div class="main-panel">
+    <div class="content-wrapper">
+        <div class="page-header">
+
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                </ol>
+            </nav>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Fiş Ekleme</h4>
+
+
+
+                        <form asp-controller="ProductType" asp-action="ekle" class="forms-sample">
+                            <span>Fiş Tarihi:</span><input type="date" asp-for="Factory.CreatedDate" />
+                            <button type="submit" class="btn btn-primary btn-rounded btn-fw btn-sm"> Kaydet</button>
+                            <div class="table-responsive">
+                                <table id="dtBasicExample3" class="">
+                                    <thead>
+                                        <tr class="Search" id="tablodoldurss">
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="Search" id="tablodoldaltt"></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer class="footer">
+        <div class="d-sm-flex justify-content-center justify-content-sm-between">
+            <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Tüm Haklar Saklıdır. © 2023</span>
+            <!-- <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">  <a href="https://www.bootstrapdash.com/bootstrap-admin-template/" target="_blank">Bootstrap admin templates</a> from Bootstrapdash.com</span> -->
+        </div>
+    </footer>
+</div>
+
+
+@*<div class="row">
+    <header class="page-header">
+    </header>
+    <div class="col-lg-6 col-md-6">
+        <form asp-controller="ProductType" asp-action="ekle">
+            <span>Fiş Tarihi:</span><input type="date" asp-for="Factory.CreatedDate" />
+            <table id="dtBasicExample3" class="table table-striped table-bordered"
+                   cellspacing="0" style="text-align:center">
+                <thead>
+                    <tr class="odd" id="tablodoldurss"></tr>
+
+                </thead>
+                <tbody>
+                    <tr class="odd" id="tablodoldaltt"></tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+</div>
+*@
+
+
+
+
+
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/snippets/javascript.min.js"></script>
+<script src="/lib/jquery/dist/jquery.min.js"></script>
+<script>
+    function geneltoplam(toplam) {
+        var ilkdeger = $("#geneltoplam").val();
+        var toplanan = parseFloat(ilkdeger) + parseFloat(toplam);
+        $("#geneltoplam").val(toplanan);
+    };
+    function focusOn(this) {
+    }
+
+    function isNumberKey(evt) {
+        console.log(evt);
+        var charCode = (evt.which) ? evt.which : event.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57))
+            return false;
+        return true;
+    }
+
+
+
+    function keyCapt(e) {
+
+        console.log(e);
+        if (e.value != '' && e.value > 0) {
+
+            var name = $(e).attr('name');
+            var spt = name.split(","); //siplit 0 renk adı / siplir 1 fiyat
+            var ilk = spt[0];
+
+            var carpim = 1;
+
+            //ilk input adet değerini al
+            var ilkdeger = $("#" + ilk + "totalQuantity").val();
+            ilkdeger = parseFloat(ilkdeger) + parseFloat(e.value);
+            console.log(ilkdeger);
+
+            //girilen adetleri sürekli toplayarak toplam adet inputuna at
+            $("#" + ilk + "totalQuantity").val(ilkdeger);
+
+            //girilen adet ile fiyatın çarpımı
+            carpim = parseFloat(ilkdeger) * parseFloat(spt[1]);
+
+            //arka tarafdaki toplam fiyat
+            $("#" + ilk + "totalPrice").val(carpim);
+
+            //ekranda gözükecek toplam fiyat
+            $("#" + ilk + "GozukecekPrice").val(carpim);
+
+
+
+            geneltoplam(carpim);
+        }
+    };
+</script>
+<script>
+    $(document).ready(function() {
+        $('#tablodoldaltt').show();
+        $('#tablodoldurss').show();
+        $.ajax({
+            type: 'POST',
+            url: '/ProductType/deneme',
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            data: "",
+            success: function(data) {
+                var Adth = '<th>#</th>';
+                var inputth = '<th>#</th>';
+                var sda;
+                var value = "";
+                var d = "";
+
+                for (var i = 0; i < data.length; i++) {
+                    Adth += '<th style="min-width:73px;">' + data[i] + '</th>';
+                    value = data[i].split(',');
+                    console.log(value[1]);
+                    inputth += '<th >';
+                    for (var j = 0; j < 50; j++) {
+
+                        if (j == 0) {
+
+                            inputth += '<span>toplam :</span><input style="text-align:center" onkeyup="keyCapt(this)" onkeypress="isNumberKey(this)" value="0" name="' + data[i] + '_' + i + ' tpl" type="text" min="0" form-control calcdata" >';
+
+                            inputth += '<span>fiyat :</span><input style="text-align:center" onkeyup="keyCapt(this)" onkeypress="isNumberKey(this)" value="0" name="' + data[i] + '_' + i + '" type="text" min="0" form-control calcdata" >';
+
+                            inputth += '<input style="text-align:center" onkeyup="keyCapt(this)" onkeypress="isNumberKey(this)" value="" disabled="disabled" name="' + data[i] + '_' + i + '" type="text" min="0" form-control calcdata" >';
+                        }
+                        inputth += '<input style="text-align:center" onkeyup="keyCapt(this)" onkeypress="isNumberKey(this)" value="0" name="' + data[i] + '_' + i + '" type="text" min="0" form-control calcdata" >';
+                    }
+                    inputth += '</th>';
+                }
+                //inputth += '<th><button type="submit" style="background-color:#96885a; color:white; " class="btn width-md waves-effect waves-light form-control"> Add +</button>    <span>Genel Toplam</span><input style="text-align:center" value="0" name="geneltoplam"  id="geneltoplam" type="text" disabled="disabled"  form-control calcdata" ></th>';
+                $("#tablodoldurss").html(Adth);
+                $("#tablodoldaltt").html(inputth);
+            },
+            error: function() {
+                alert('Failed to receive the Data');
+                console.log('Failed ');
+            }
+        })
+    });
+</script>
+
+
+
+

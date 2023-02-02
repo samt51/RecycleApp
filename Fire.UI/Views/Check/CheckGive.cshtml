@@ -1,0 +1,129 @@
+﻿@model AllLayoutViewModel
+@{
+    ViewData["Title"] = "CheckGive";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+
+
+
+
+<div class="main-panel">
+    <div class="content-wrapper">
+        <div class="row">
+            <div class="col-lg-12 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Çekler</h4>
+                        <input type="text" class="form-control" id="txtsearch" placeholder="Çek">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <td>Serial Numara</td>
+                                        <td>Banka</td>
+                                        <td>Tutar</td>
+                                        <td>Ödeme Tarihi</td>
+                                        <td>Kimden Alındı</td>
+                                        <td>Kime Verildi</td>
+
+                                    </tr>
+                                    @foreach (var customer in ViewBag.results)
+                                    {
+                                        <tr class="Search">
+                                            <td>@customer.checkNumber</td>
+                                            <td>@Functions.bankname(customer.bankid)</td>
+                                            <td>@customer.price</td>
+                                            <td>@customer.checkDate</td>
+                                            <td>@Functions.FactoryName(customer.whoFromGetted,customer.IsWhat)</td>
+                                            <td>@Functions.CustomerName(customer.toWhoWasGiven)</td>
+                                            <td style="text-align:right">
+                                                <form action="/Check/CheckGive" method="post" style="display:inline">
+                                                    <input type="hidden" name="id" value="@customer.id" />
+                                                    <button type="submit" class="btn btn-danger js-sweetalert" style="margin-right:6px !important;" data-type="confirm" title="Delete">Seç</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    }
+                                </thead>
+                               @* <tbody>
+                                </tbody>*@
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer class="footer">
+        <div class="d-sm-flex justify-content-center justify-content-sm-between">
+            <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Tüm Haklar Saklıdır. © 2023</span>
+            <!-- <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">  <a href="https://www.bootstrapdash.com/bootstrap-admin-template/" target="_blank">Bootstrap admin templates</a> from Bootstrapdash.com</span> -->
+        </div>
+    </footer>
+</div>
+
+
+@*
+<div class="row">
+    <center>
+        <header class="page-header">
+            <input type="text" id="txtsearch" placeholder="Müşteri Giriniz" />
+        </header>
+        <hr />
+        <table class="table table-bordered">
+            <tr>
+                <td>Serial Numara</td>
+                <td>Banka</td>
+                <td>Tutar</td>
+                <td>Ödeme Tarihi</td>
+                <td>Kimden Alındı</td>
+                <td>Kime Verildi</td>
+
+            </tr>
+            @foreach (var customer in ViewBag.results)
+            {
+                <tr class="Search">
+                    <td>@customer.checkNumber</td>
+                    <td>@Functions.bankname(customer.bankid)</td>
+                    <td>@customer.price</td>
+                    <td>@customer.checkDate</td>
+                    <td>@Functions.FactoryName(customer.whoFromGetted,customer.IsWhat)</td>
+                    <td>@Functions.CustomerName(customer.toWhoWasGiven)</td>
+                    <td style="text-align:right">
+                        <form action="/Check/CheckGive" method="post" style="display:inline">
+                            <input type="hidden" name="id" value="@customer.id" />
+                            <button type="submit" class="btn btn-danger js-sweetalert" style="margin-right:6px !important;" data-type="confirm" title="Delete">Seç</button>
+                        </form>
+                           <a href="/ProductType/Add/@CommondMethod.ConvertToEncrypt(@customer.id.ToString())" name="id" class="btn-sm btn-info" style="margin-right:6px !important;" title="Fişler">Yeni Fiş</a>
+                    <a href="/Customer/Update/@CommondMethod.ConvertToEncrypt(@customer.id.ToString())" name="id" class="btn-warning btn-sm" style="margin-right:6px !important;" title="Edit">Güncelle</a>
+                    </td>
+                </tr>
+            }
+        </table>
+    </center>
+</div>
+*@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+    $(document).ready(function() {
+        function Contains(text_one, text_two) {
+            if (text_one.indexOf(text_two) != -1)
+                return true;
+        }
+        $("#txtsearch").keyup(function() {
+            var searchtext = $("#txtsearch").val().toLowerCase();
+            $(".Search").each(function() {
+                if (!Contains($(this).text().toLowerCase(), searchtext)) {
+                    $(this).hide();
+                }
+                else {
+                    $(this).show();
+                }
+            })
+        })
+    })
+
+</script>
