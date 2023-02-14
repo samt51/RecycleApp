@@ -7,20 +7,21 @@ namespace Fire.DataAccess.DbConnection
     {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server=(localdb)\NETAX;Database=FireDb;Trusted_Connection=True");
-            //optionsBuilder.UseSqlServer(@"Server=77.245.159.10\MSSQLSERVER2019;Database=ticaretdb;User ID=samet123;Password=1425369As;Trusted_Connection=false;");
+            //optionsBuilder.UseSqlServer(@"Server=(localdb)\NETAX;Database=FireDb;Trusted_Connection=True");
+            /* derebey*/   //optionsBuilder.UseSqlServer(@"Server=77.245.159.10\MSSQLSERVER2019;Database=receycleDb;User ID=receycle;Password=1425369As@.;Trusted_Connection=false;");
+            /* test*/   optionsBuilder.UseSqlServer(@"Server=77.245.159.27\MSSQLSERVER2019;Database=test-recycle;User ID=test-recycle;Password=1425369As@.;Trusted_Connection=false;");
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<FactoryProductType>().
-HasOne(x => x.factory)
-.WithMany(x => x.factoryProductTypes)
-.HasForeignKey(x => x.factoryid);
+            //            modelBuilder.Entity<FactoryProductType>().
+            //HasOne(x => x.factory)
+            //.WithMany(x => x.factoryProductTypes)
+            //.HasForeignKey(x => x.factoryid);
 
-            modelBuilder.Entity<User>().
-HasOne(x => x.userRoles)
-.WithMany(x => x.Users)
-.HasForeignKey(x => x.userroleid);
+            //            modelBuilder.Entity<User>().
+            //HasOne(x => x.userRoles)
+            //.WithMany(x => x.Users)
+            //.HasForeignKey(x => x.userroleid);
 
 
 
@@ -44,5 +45,8 @@ HasOne(x => x.userRoles)
         public DbSet<bank> Bank { get; set; }
         public DbSet<Check> CheckCont { get; set; }
         public DbSet<Receipt> Receipt { get; set; }
+        public DbSet<ExpenseDetail> expenseDetails { get; set; }
+        public DbSet<ExpenseCategoria> expenseCategorias { get; set; }
+
     }
 }

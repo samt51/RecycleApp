@@ -1,0 +1,155 @@
+﻿@model AllLayoutViewModel
+@{
+    ViewData["Title"] = "ExpenseGetList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<head>
+    <style>
+        .whiteColor {
+            color: white !important;
+        }
+
+        .centerRight {
+            border: 2px solid red;
+            padding: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<div class="main-panel">
+    <div class="content-wrapper">
+        <div class="row">
+            <div class="col-lg-12 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Raporlar</h4>
+
+                        <div class="form-group">
+                            <form method="post" asp-controller="Expenses" asp-action="ExpenseGetList">
+                                <label for="exampleInputEmail3">Kategori</label>
+                                @Html.DropDownListFor(x=>x.expenseCategoria.id,(List<SelectListItem>)ViewBag.expenseCategoria,"Seç",new{@class="form-control whiteColor",@id="expenseCategoria"})
+                                <br />
+                                <button type="submit" class="btn btn-info">Getir</button>
+                            </form>
+
+                        </div>
+
+                        <div class="table-responsive">
+                            <br />
+                            <div class="centerRight">
+                                <label for="exampleInputUsername1">Toplam Gider:<label for="exampleInputUsername1"> </label><label id="SumResult">@ViewBag.total</label> </label>
+                            </div>
+                            @if (ViewBag.categoritotal != null)
+                            {
+                                <div class="centerRight">
+
+                                    <label for="exampleInputUsername1">Kategori Bazlı Gider:<label for="exampleInputUsername1"> </label><label id="CategoriResult">@ViewBag.categoritotal</label> </label>
+
+
+                                </div>
+                            }
+                            <br />
+                            @* <label for="exampleInputUsername1">Top.Kazanç:<label id="Earnings">@ViewBag.Earnings</label> </label>
+                            <br />
+                            <label for="exampleInputUsername1">Top.Sermaye:<label id="Capital">@ViewBag.Capital</label> </label>
+                            <br />
+                            <label for="exampleInputUsername1">Ödemesi Beklenen (Sermaye):<label id="CapitalTotal"> @ViewBag.CapitalTotal</label></label>
+                            <br />
+                            <label for="exampleInputUsername1"> Ödemesi Beklenen (Kazanç):<label id="EarningsTotal"> @ViewBag.EarningsTotal</label></label>*@
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th class="whiteColor">Kategorisi</th>
+                                        <th class="whiteColor">Ücret</th>
+                                        <th class="whiteColor">Açıklama</th>
+
+                                    </tr>
+                                    @foreach (var item in Model.ExpenseDetails)
+                                    {
+                                        <tr class="Search">
+                                            <td class="whiteColor">@Functions.GetExpensCategoriaName(item.ExpenseCategoriaId)</td>
+                                            <td class="whiteColor deneme">@item.Price</td>
+                                            <td class="whiteColor">@item.Description</td>
+                                        </tr>
+                                    }
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer class="footer">
+        <div class="d-sm-flex justify-content-center justify-content-sm-between">
+            <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Tüm Haklar Saklıdır. © 2023</span>
+            <!-- <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">  <a href="https://www.bootstrapdash.com/bootstrap-admin-template/" target="_blank">Bootstrap admin templates</a> from Bootstrapdash.com</span> -->
+        </div>
+    </footer>
+</div>
+
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/snippets/javascript.min.js"></script>
+<script src="/lib/jquery/dist/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+
+
+
+    var SumResult = document.getElementById("SumResult");
+    SumResult.innerHTML = formatMyMoney(SumResult.innerHTML) + " " + "₺";
+
+
+    var CategoriResult = document.getElementById("CategoriResult");
+    CategoriResult.innerHTML = formatMyMoney(CategoriResult.innerHTML) + " " + "₺";
+
+    var deneme = document.getElementsByClassName("deneme");
+
+
+    for (var j = 0; j < deneme.length; j++) {
+        deneme[j].innerHTML = formatMyMoney(deneme[j].innerHTML) + " " + "₺";
+    }
+
+
+    $(document).ready(function() {
+        function Contains(text_one, text_two) {
+            if (text_one.indexOf(text_two) != -1)
+                return true;
+        }
+        $("#txtsearch").keyup(function() {
+            var searchtext = $("#txtsearch").val().toLowerCase();
+            $(".Search").each(function() {
+                if (!Contains($(this).text().toLowerCase(), searchtext)) {
+                    $(this).hide();
+                }
+                else {
+                    $(this).show();
+                }
+            })
+        })
+    })
+
+
+    function formatMyMoney(price) {
+
+        var currency_symbol = "₺"
+
+        var formattedOutput = new Intl.NumberFormat('tr-TR', {
+            style: 'currency',
+            currency: 'TRY',
+            minimumFractionDigits: 2,
+        });
+
+        return formattedOutput.format(price).replace(currency_symbol, '')
+    }
+
+
+
+
+</script>
+

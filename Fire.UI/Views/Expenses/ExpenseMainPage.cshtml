@@ -13,6 +13,7 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Borç ve Alacak Takip</h4>
+                 
                         <input type="text" class="form-control" id="txtsearch" placeholder="Bilgiler">
                         <div class="table-responsive">
                             <table class="table table-striped">
@@ -31,20 +32,22 @@
                                             <td>@customer.Name</td>
                                             <td>@customer.Surname</td>
                                             <td>@customer.PhoneNumber</td>
-                                            @if (customer.Type==true)
-                                           {
-                                                    <td>Müşteri</td>
-                                           }else{
-                                                 <td>Fabrika</td>
-                                           }
-                                       
+                                            @if (customer.Type == true)
+                                            {
+                                                <td>Müşteri</td>
+                                            }
+                                            else
+                                            {
+                                                <td>Fabrika</td>
+                                            }
+
                                             <td style="text-align:right">
-                                               @* <a href="/Customer/GetBeforeFisWithCustomerid/@CommondMethod.ConvertToEncrypt(@customer.id.ToString())" name="id" class="btn btn-inverse-success btn-fw btn-sm" title="Fişler">Fişler</a>
-                                                <a href="/ProductType/Add/@CommondMethod.ConvertToEncrypt(@customer.id.ToString())" name="id" class="btn btn-inverse-info btn-fw btn-sm" title="Fişler">Yeni Fiş</a>
-                                                <a href="/Customer/Update/@CommondMethod.ConvertToEncrypt(@customer.id.ToString())" name="id" class="btn btn-inverse-warning btn-fw btn-sm" title="Edit">Güncelle</a>
-                                                <a href="/Check/Add/@CommondMethod.ConvertToEncrypt(@customer.id.ToString()+","+"true")" name="id" class="btn btn-inverse-primary btn-fw btn-sm" title="Çek">Yeni Çek</a>
-                                                <a href="/Check/CheckGive/@CommondMethod.ConvertToEncrypt(@customer.id.ToString())" name="id" class="btn btn-inverse-danger btn-fw btn-sm" title="Çek">Çek Ver</a>
-                                                <a href="/Check/CheckOfCustomer/@CommondMethod.ConvertToEncrypt(@customer.id.ToString())" name="id" class="btn btn-inverse-secondary btn-fw btn-sm" title="Çek">Çekler</a>*@
+                                                @* <a href="/Customer/GetBeforeFisWithCustomerid/@CommondMethod.ConvertToEncrypt(@customer.id.ToString())" name="id" class="btn btn-inverse-success btn-fw btn-sm" title="Fişler">Fişler</a>
+                                            <a href="/ProductType/Add/@CommondMethod.ConvertToEncrypt(@customer.id.ToString())" name="id" class="btn btn-inverse-info btn-fw btn-sm" title="Fişler">Yeni Fiş</a>
+                                            <a href="/Customer/Update/@CommondMethod.ConvertToEncrypt(@customer.id.ToString())" name="id" class="btn btn-inverse-warning btn-fw btn-sm" title="Edit">Güncelle</a>
+                                            <a href="/Check/Add/@CommondMethod.ConvertToEncrypt(@customer.id.ToString()+","+"true")" name="id" class="btn btn-inverse-primary btn-fw btn-sm" title="Çek">Yeni Çek</a>
+                                            <a href="/Check/CheckGive/@CommondMethod.ConvertToEncrypt(@customer.id.ToString())" name="id" class="btn btn-inverse-danger btn-fw btn-sm" title="Çek">Çek Ver</a>
+                                            <a href="/Check/CheckOfCustomer/@CommondMethod.ConvertToEncrypt(@customer.id.ToString())" name="id" class="btn btn-inverse-secondary btn-fw btn-sm" title="Çek">Çekler</a>*@
                                             </td>
                                         </tr>
                                     }
@@ -90,3 +93,4 @@
             })
         })
     })
+</script>

@@ -1,8 +1,9 @@
 ﻿@model AllLayoutViewModel
 @{
-    ViewData["Title"] = "Detail";
+    ViewData["Title"] = "AddCategoria";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 <head>
     <style>
         .whiteColor {
@@ -11,10 +12,12 @@
     </style>
 </head>
 
+
+
 <div class="main-panel">
     <div class="content-wrapper">
         <div class="page-header">
-            <h3 class="page-title"> Profil Güncelleme </h3>
+            <h3 class="page-title"> Kategori Kaydet </h3>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                 </ol>
@@ -35,14 +38,10 @@
                         }
                         @*      <h4 class="card-title">Basic form elements</h4>
                         <p class="card-description"> Basic form elements </p>*@
-                        <form asp-controller="User" asp-action="Detail" class="forms-sample" name="formadd" method="post" enctype="multipart/form-data">
+                        <form asp-controller="Expenses" asp-action="AddCategoria" class="forms-sample" name="formadd" method="post" enctype="multipart/form-data">
                             <div class="form-group">
-                                <label for="exampleInputPassword4">Email</label>
-                                <input class="form-control whiteColor" placeholder="Email" id="giveMany" type="text" asp-for="User.email" required />
-                            </div>
-                             <div class="form-group">
-                                <label for="exampleInputPassword4">Şifre</label>
-                                <input class="form-control whiteColor" placeholder="Şifr" id="giveMany" type="password" asp-for="User.password" required />
+                                <label for="exampleInputPassword4">Kategori</label>
+                                <input class="form-control whiteColor" placeholder="Kategori" type="text" asp-for="expenseCategoria.name" required />
                             </div>
                             <button type="submit" class="btn btn-primary mr-2">Kaydet</button>
                         </form>
@@ -52,3 +51,4 @@
         </div>
     </div>
 </div>
+

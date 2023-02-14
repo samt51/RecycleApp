@@ -1,0 +1,95 @@
+﻿@model AllLayoutViewModel
+@{
+    ViewData["Title"] = "GetCategoriaList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<head>
+
+    <style>
+        .whiteColor {
+            color: white !important;
+        }
+    </style>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datepicker/0.6.5/datepicker.css" />
+</head>
+
+
+
+<div class="main-panel">
+    <div class="content-wrapper">
+        <div class="row">
+            <div class="col-lg-12 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Çalışanlar</h4>
+                        <input type="text" class="form-control" id="txtsearch" placeholder="Kategori">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <td class="whiteColor">Kategori</td>
+
+
+                                    </tr>
+                                    @foreach (var employees in Model.ExpenseCategorias)
+                                    {
+                                        <tr class="Search">
+                                            <td class="whiteColor">@employees.name</td>
+
+                                            <td style="text-align:right">
+                                                <a href="/Employees/Update/@employees.id" name="id" class="btn-sm btn-warning" style="margin-right:6px !important;" title="Edit">Güncelle</a>
+                                                @*   <form action="/Employees/Delete" method="post" style="display:inline">
+                                            <input type="hidden" name="id" value="@employees.id" />
+                                            <button type="submit" class="btn-sm btn-danger js-sweetalert" style="margin-right:6px !important;" data-type="confirm" title="Delete">Sil</button>
+                                            </form>*@
+                                            </td>
+                                        </tr>
+                                    }
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer class="footer">
+        <div class="d-sm-flex justify-content-center justify-content-sm-between">
+            <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Tüm Haklar Saklıdır. © 2023</span>
+            <!-- <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">  <a href="https://www.bootstrapdash.com/bootstrap-admin-template/" target="_blank">Bootstrap admin templates</a> from Bootstrapdash.com</span> -->
+        </div>
+    </footer>
+</div>
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/snippets/javascript.min.js"></script>
+<script src="/lib/jquery/dist/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+    $(document).ready(function() {
+        function Contains(text_one, text_two) {
+            if (text_one.indexOf(text_two) != -1)
+                return true;
+        }
+        $("#txtsearch").keyup(function() {
+            var searchtext = $("#txtsearch").val().toLowerCase();
+            $(".Search").each(function() {
+                if (!Contains($(this).text().toLowerCase(), searchtext)) {
+                    $(this).hide();
+                }
+                else {
+                    $(this).show();
+                }
+            })
+        })
+    })
+</script>
+
+

@@ -5,6 +5,20 @@
 }
 
 
+<head>
+    <style>
+        .whiteColor {
+            color: white !important;
+        }
+
+        .centerRight {
+            border: 2px solid red;
+            padding: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+
 <div class="main-panel">
     <div class="content-wrapper">
         <div class="row">
@@ -25,19 +39,46 @@
                         else
                         {
                             <div class="table-responsive">
+                                <br />
+                                <div class="centerRight">
+                                    <label for="exampleInputUsername1">Top.Kazanç:<label for="exampleInputUsername1">((Top.Gider + Top.Sermaye) -Top.Kazanç) =</label><label id="SumResult">@ViewBag.SumResult</label> </label>
+                                    <br />
+                                    <label for="exampleInputUsername1">Beklenenler : <label for="exampleInputUsername1">(Beklenen Ödeme - Beklenen Sermaye ) =</label><label id="WaitSumResult">@ViewBag.WaitSumResult</label> </label>
+                                </div>
+                                <br />
+                                <label for="exampleInputUsername1">Top.Kazanç:<label id="Earnings">@ViewBag.Earnings</label> </label>
+                                <br />
+                                <label for="exampleInputUsername1">Top.Sermaye:<label id="Capital">@ViewBag.Capital</label> </label>
+                                <br />
+                                <label for="exampleInputUsername1">Top.Gider:<label id="expenseDetailSum">@ViewBag.expenseDetailSum</label> </label>
+                                <br />
+                                <label for="exampleInputUsername1">Ödemesi Beklenen (Sermaye):<label id="CapitalTotal"> @ViewBag.CapitalTotal</label></label>
+                                <br />
+                                <label for="exampleInputUsername1"> Ödemesi Beklenen (Kazanç):<label id="EarningsTotal"> @ViewBag.EarningsTotal</label></label>
                                 <table class="table table-striped">
                                     <thead>
                                         <tr>
-                                            <th>Ürün</th>
-                                            <th>Alınan Kg</th>
-                                            <th>Müşteri</th>
+                                            <th class="whiteColor">Ürün</th>
+                                            <th class="whiteColor">Verilen Kg</th>
+                                            <th class="whiteColor">Ürün Bazlı Toplam Ücret (Kazanç)</th>
+                                            <th class="whiteColor">Müşteri (Fabrika)</th>
+                                            <th class="whiteColor">Fiş Tarihi</th>
+                                            <th class="whiteColor">Gün içinde verilen miktar</th>
+                                            <th class="whiteColor">Fiş Toplam Ücret</th>
+                                            <th class="whiteColor">Fiş Toplam Ödenmiş Ücret</th>
 
                                         </tr>
-                                        @foreach (var item in Model.factoryQuantities)
+                                        @foreach (var item in Model.productQuantities)
                                         {
                                             <tr class="Search">
-                                                <td>@item.Name</td>
-                                                <td>@item.Totalkg</td>
+                                                <td class="whiteColor">@item.Name</td>
+                                                <td class="whiteColor denemekg">@item.Totalkg</td>
+                                                <td class="whiteColor deneme">@item.Totalprice</td>
+                                                <td class="whiteColor">@Functions.GetCustomerByReceiptId(item.ReceiptId,false)</td>
+                                                <td class="whiteColor">@item.CreatedDate.ToString("dd-MM-yyyy")</td>
+                                                <td class="whiteColor">@Functions.GetReceipt(item.ReceiptId,false).DailyTakeCount</td>
+                                                <td class="whiteColor deneme">@Functions.ReceiptTotalPrice(item.ReceiptId,false)</td>
+                                                <td class="whiteColor deneme">@Functions.TotalPayment(item.ReceiptId,false)</td>
                                             </tr>
                                         }
                                     </thead>
@@ -46,7 +87,6 @@
                                 </table>
                             </div>
                         }
-
                     </div>
                 </div>
             </div>
@@ -59,3 +99,74 @@
         </div>
     </footer>
 </div>
+
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/snippets/javascript.min.js"></script>
+<script src="/lib/jquery/dist/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<script>
+    var deneme = document.getElementsByClassName("deneme");
+
+    for (var j = 0; j < deneme.length; j++) {
+        deneme[j].innerHTML = formatMyMoney(deneme[j].innerHTML) + " " + "₺";
+    }
+
+    var denemekg = document.getElementsByClassName("denemekg");
+
+    for (var j = 0; j < denemekg.length; j++) {
+        denemekg[j].innerHTML = formatMyMoney(denemekg[j].innerHTML);
+    }
+
+
+    var SumResult = document.getElementById("SumResult");
+    SumResult.innerHTML = formatMyMoney(SumResult.innerHTML) + " " + "₺";
+
+
+    if (parseFloat(SumResult.innerHTML) < 0) {
+        const note = document.querySelector('.centerRight')
+        note.style.cssText = '2px solid #4ca52a';
+
+    }
+
+
+
+
+
+    var Earnings = document.getElementById("Earnings");
+    Earnings.innerHTML = formatMyMoney(Earnings.innerHTML) + " " + "₺";
+
+    var Capital = document.getElementById("Capital");
+    Capital.innerHTML = formatMyMoney(Capital.innerHTML) + " " + "₺";
+
+    var CapitalTotal = document.getElementById("CapitalTotal");
+    CapitalTotal.innerHTML = formatMyMoney(CapitalTotal.innerHTML) + " " + "₺";
+
+    var EarningsTotal = document.getElementById("EarningsTotal");
+    EarningsTotal.innerHTML = formatMyMoney(EarningsTotal.innerHTML) + " " + "₺";
+
+    var expenseDetailSum = document.getElementById("expenseDetailSum");
+    expenseDetailSum.innerHTML = formatMyMoney(expenseDetailSum.innerHTML) + " " + "₺";
+
+    var WaitSumResult = document.getElementById("WaitSumResult");
+    WaitSumResult.innerHTML = formatMyMoney(WaitSumResult.innerHTML) + " " + "₺";
+
+
+
+
+    function formatMyMoney(price) {
+
+        var currency_symbol = "₺"
+
+        var formattedOutput = new Intl.NumberFormat('tr-TR', {
+            style: 'currency',
+            currency: 'TRY',
+            minimumFractionDigits: 2,
+        });
+
+        return formattedOutput.format(price).replace(currency_symbol, '')
+    }
+
+</script>
+
+

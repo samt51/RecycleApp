@@ -33,6 +33,15 @@ namespace Fire.UI.Models
         //    }
         //    return tutar;
         //}
+        public static Receipt GetReceipt(int receiptId, bool Ishat)
+        {
+            if (receiptId == 0)
+                return null;
+            var receipt = db.Receipt.FirstOrDefault(x => x.id == receiptId && x.IsWhat == Ishat);
+            if (receipt == null)
+                return null;
+            return receipt;
+        }
         public static string product(int id)
         {
             var result = db.ProductTypes.Where(x => x.id == id).FirstOrDefault();
@@ -86,6 +95,19 @@ namespace Fire.UI.Models
 
             return result.Name + " " + result.Surname + " " + result.PhoneNumber;
         }
+        public static string GetCustomerByReceiptId(int receiptId, bool IsWhat)
+        {
+            if (receiptId == 0)
+                return "";
+            var receipt = db.Receipt.FirstOrDefault(x => x.id == receiptId && x.IsWhat == IsWhat);
+            if (receipt == null)
+                return "";
+            if (IsWhat == false)
+            {
+                return FactoryName(receipt.CustomerId, false);
+            }
+            return CustomerName(receipt.CustomerId);
+        }
         public static string bankname(int bankid)
         {
             return db.Bank.Where(x => x.id == bankid).FirstOrDefault().name;
@@ -97,9 +119,9 @@ namespace Fire.UI.Models
                 return name.branch;
             return "";
         }
-        public static decimal stockReturn(int productid,int branchid)
+        public static decimal stockReturn(int productid, int branchid)
         {
-            var stock = db.StockTracking.FirstOrDefault(x => x.productid == productid&&x.branchid==branchid);
+            var stock = db.StockTracking.FirstOrDefault(x => x.productid == productid && x.branchid == branchid);
             if (stock != null)
             {
                 return stock.totalkg;
@@ -112,6 +134,45 @@ namespace Fire.UI.Models
             if (name != null)
                 return name.Name;
             return "";
+        }
+        public static decimal TotalPayment(int receiptid, bool IsWhat)
+        {
+            if (receiptid == 0)
+                return 0;
+            decimal paidTutar = decimal.Zero;
+            var paymentCont = db.PaymentCont.FirstOrDefault(x => x.ReceiptId == receiptid && x.IsWhat == IsWhat);
+            if (paymentCont == null)
+                paidTutar = 0;
+            else
+                paidTutar = paymentCont.TotalPrice;
+
+            return paidTutar;
+        }
+        public static decimal ReceiptTotalPrice(int receiptid, bool IsWhat)
+        {
+            if (receiptid == 0)
+                return 0;
+            decimal paidTutar = decimal.Zero;
+            if (IsWhat == false)
+            {
+                var factorySum = db.factoryQuantities.Where(x => x.ReceiptId == receiptid).ToList();
+                paidTutar = factorySum.Sum(x => x.Totalprice);
+                return paidTutar;
+            }
+
+            var sum = db.productQuantity.Where(x => x.ReceiptId == receiptid).ToList();
+            paidTutar = sum.Sum(x => x.Totalprice);
+            return paidTutar;
+
+        }
+        public static string GetExpensCategoriaName(int id)
+        {
+            if (id == 0)
+                return "";
+            var data = db.expenseCategorias.FirstOrDefault(x => x.id == id);
+            if (data == null)
+                return "";
+            return data.name;
         }
     }
 }

@@ -47,19 +47,19 @@
                                 <span></span>
                             </div>
                         </div>
-                        <a href="#" id="profile-dropdown" data-toggle="dropdown"><i class="mdi mdi-dots-vertical"></i></a>
+                        <a asp-controller="User" asp-action="Detail" id="profile-dropdown" data-toggle="dropdown"><i class="mdi mdi-dots-vertical"></i></a>
                         <div class="dropdown-menu dropdown-menu-right sidebar-dropdown preview-list" aria-labelledby="profile-dropdown">
-                            <a href="#" class="dropdown-item preview-item">
+                            <a asp-controller="User" asp-action="Detail" class="dropdown-item preview-item">
                                 <div class="preview-thumbnail">
                                     <div class="preview-icon bg-dark rounded-circle">
                                         <i class="mdi mdi-settings text-primary"></i>
                                     </div>
                                 </div>
                                 <div class="preview-item-content">
-                                    <p class="preview-subject ellipsis mb-1 text-small">Account settings</p>
+                                    <p class="preview-subject ellipsis mb-1 text-small">Profil</p>
                                 </div>
                             </a>
-                            <div class="dropdown-divider"></div>
+                       @*     <div class="dropdown-divider"></div>
                             <a href="#" class="dropdown-item preview-item">
                                 <div class="preview-thumbnail">
                                     <div class="preview-icon bg-dark rounded-circle">
@@ -69,16 +69,16 @@
                                 <div class="preview-item-content">
                                     <p class="preview-subject ellipsis mb-1 text-small">Change Password</p>
                                 </div>
-                            </a>
+                            </a>*@
                             <div class="dropdown-divider"></div>
-                            <a href="#" class="dropdown-item preview-item">
+                            <a asp-controller="User" asp-action="Logout" class="dropdown-item preview-item">
                                 <div class="preview-thumbnail">
                                     <div class="preview-icon bg-dark rounded-circle">
                                         <i class="mdi mdi-calendar-today text-success"></i>
                                     </div>
                                 </div>
                                 <div class="preview-item-content">
-                                    <p class="preview-subject ellipsis mb-1 text-small">To-do list</p>
+                                    <p class="preview-subject ellipsis mb-1 text-small">Çıkış</p>
                                 </div>
                             </a>
                         </div>
@@ -168,8 +168,10 @@
                     </a>
                     <div class="collapse" id="ui-expense">
                         <ul class="nav flex-column sub-menu">
-                            <li class="nav-item"> <a class="nav-link" asp-controller="Expenses" asp-action="GetList">Giderler</a></li>
-                            <li class="nav-item"> <a class="nav-link" asp-controller="Expenses" asp-action="Add">Yeni Gider</a></li>
+                            <li class="nav-item"> <a class="nav-link" asp-controller="Expenses" asp-action="ExpenseGetList">Giderler</a></li>
+                                      <li class="nav-item"> <a class="nav-link" asp-controller="Expenses" asp-action="AddExpense">Gider Ekle</a></li>
+                               <li class="nav-item"> <a class="nav-link" asp-controller="Expenses" asp-action="GetCategoriaList">Kategoriler</a></li>
+                              <li class="nav-item"> <a class="nav-link" asp-controller="Expenses" asp-action="AddCategoria">Kategori Ekle</a></li>
                         </ul>
                     </div>
                 </li>
@@ -306,18 +308,18 @@
                             <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="profileDropdown">
                                 <h6 class="p-3 mb-0">Profile</h6>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item preview-item">
+                                <a asp-controller="User" asp-action="Detail" class="dropdown-item preview-item">
                                     <div class="preview-thumbnail">
                                         <div class="preview-icon bg-dark rounded-circle">
                                             <i class="mdi mdi-settings text-success"></i>
                                         </div>
                                     </div>
                                     <div class="preview-item-content">
-                                        <p class="preview-subject mb-1">Settings</p>
+                                        <p class="preview-subject mb-1">Profil</p>
                                     </div>
                                 </a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item preview-item">
+                                <a asp-controller="User" asp-action="Logout" class="dropdown-item preview-item">
                                     <div class="preview-thumbnail">
                                         <div class="preview-icon bg-dark rounded-circle">
                                             <i class="mdi mdi-logout text-danger"></i>
@@ -328,7 +330,7 @@
                                     </div>
                                 </a>
                                 <div class="dropdown-divider"></div>
-                                <p class="p-3 mb-0 text-center">Advanced settings</p>
+                                <p class="p-3 mb-0 text-center">Profil Ayarları</p>
                             </div>
                         </li>
                     </ul>

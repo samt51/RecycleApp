@@ -6,6 +6,13 @@
 
 
 
+<head>
+    <style>
+        .whiteColor {
+            color: white !important;
+        }
+    </style>
+</head>
 
 <div class="main-panel">
     <div class="content-wrapper">
@@ -30,16 +37,27 @@
                                 <table class="table table-striped">
                                     <thead>
                                         <tr>
-                                            <th>Ürün</th>
-                                            <th>Alınan Kg</th>
-                                            <th>Müşteri</th>
+                                            <th class="whiteColor">Ürün</th>
+                                            <th class="whiteColor">Alınan Kg</th>
+                                            <th class="whiteColor">Ürün Bazlı Toplam Ücret</th>
+                                            <th class="whiteColor">Müşteri</th>
+                                            <th class="whiteColor">Fiş Tarihi</th>
+                                            <th class="whiteColor">Gün içinde verilen miktar</th>
+                                            <th class="whiteColor">Fiş Toplam Ücret</th>
+                                            <th class="whiteColor">Fiş Toplam Ödenmiş Ücret</th>
 
                                         </tr>
                                         @foreach (var item in Model.productQuantities)
                                         {
                                             <tr class="Search">
-                                                <td>@item.Name</td>
-                                                <td>@item.Totalkg</td>
+                                                <td class="whiteColor">@item.Name</td>
+                                                <td class="whiteColor denemekg">@item.Totalkg</td>
+                                                <td class="whiteColor deneme">@item.Totalprice</td>
+                                                <td class="whiteColor">@Functions.GetCustomerByReceiptId(item.ReceiptId,true)</td>
+                                                <td class="whiteColor">@item.CreatedDate.ToString("dd-MM-yyyy")</td>
+                                                <td class="whiteColor">@Functions.GetReceipt(item.ReceiptId,true).DailyTakeCount</td>
+                                                <td class="whiteColor deneme">@Functions.ReceiptTotalPrice(item.ReceiptId,true)</td>
+                                                <td class="whiteColor deneme">@Functions.TotalPayment(item.ReceiptId,true)</td>
                                             </tr>
                                         }
                                     </thead>
@@ -48,7 +66,6 @@
                                 </table>
                             </div>
                         }
-
                     </div>
                 </div>
             </div>
@@ -63,3 +80,34 @@
 </div>
 
 
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/snippets/javascript.min.js"></script>
+<script src="/lib/jquery/dist/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<script>
+    var deneme = document.getElementsByClassName("deneme");
+
+    for (var j = 0; j < deneme.length; j++) {
+        deneme[j].innerHTML = formatMyMoney(deneme[j].innerHTML) + " " + "₺";
+    }
+
+    var denemekg = document.getElementsByClassName("denemekg");
+
+    for (var j = 0; j < denemekg.length; j++) {
+        denemekg[j].innerHTML = formatMyMoney(denemekg[j].innerHTML);
+    }
+
+    function formatMyMoney(price) {
+
+        var currency_symbol = "₺"
+
+        var formattedOutput = new Intl.NumberFormat('tr-TR', {
+            style: 'currency',
+            currency: 'TRY',
+            minimumFractionDigits: 2,
+        });
+
+        return formattedOutput.format(price).replace(currency_symbol, '')
+    }
+
+</script>

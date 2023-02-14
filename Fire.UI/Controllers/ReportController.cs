@@ -17,12 +17,17 @@ namespace Fire.UI.Controllers
         private readonly IFactoryQuantityService _factoryQuantityService;
         private readonly IPaymentContService _paymentContService;
         private readonly IReceiptService _receiptService;
-        public ReportController(IProductQuantityService productQuantityService, IPaymentContService paymentContService, IFactoryQuantityService factoryQuantityServic, IReceiptService receiptService)
+        private readonly ICustomerService _customerService;
+        private readonly IExpenseDetailService _expenseDetailService;
+        public ReportController(IProductQuantityService productQuantityService, IExpenseDetailService expenseDetailService,
+            IPaymentContService paymentContService, ICustomerService customerService, IFactoryQuantityService factoryQuantityServic, IReceiptService receiptService)
         {
             _factoryQuantityService = factoryQuantityServic;
             _productQuantityService = productQuantityService;
             _receiptService = receiptService;
+            _customerService = customerService;
             _paymentContService = paymentContService;
+            _expenseDetailService = expenseDetailService;
         }
 
         [HttpGet]
@@ -74,7 +79,8 @@ namespace Fire.UI.Controllers
                     Name = y.Key,
                     Totalkg = y.Sum(x => x.Kg),
                     Totalprice = y.Sum(x => x.Totalprice),
-                    ReceiptId = y.First().ReceiptId
+                    ReceiptId = y.First().ReceiptId,
+                    CreatedDate = y.First().CreatedDate
                 }).ToList();
 
                 group = group.OrderByDescending(x => x.Totalkg).ToList();
@@ -88,7 +94,7 @@ namespace Fire.UI.Controllers
                 //{
                 //    var totalprice=_paymentContService.getpa)
                 //}
-                
+
 
 
 
@@ -96,7 +102,7 @@ namespace Fire.UI.Controllers
                 return View(new AllLayoutViewModel
                 {
                     productQuantities = group,
-                    TokenKeys=keys
+                    TokenKeys = keys
                 });
 
 
@@ -106,7 +112,7 @@ namespace Fire.UI.Controllers
             return View(new AllLayoutViewModel
             {
                 productQuantities = new List<ProductQuantity>(),
-                TokenKeys=keys
+                TokenKeys = keys
             });
         }
         [HttpGet]
@@ -124,41 +130,114 @@ namespace Fire.UI.Controllers
         [HttpPost]
         public IActionResult FactoryReport(AllLayoutViewModel model)
         {
-            //var Authorization = HttpContext.Session.GetString("token");
-            //TokenKeys keys = AuthorizationCont.Authorization(Authorization);
-            //if (keys == null)
-            //    return Redirect("/Error/401");
-            //var value = _factoryQuantityService.GetMostReportByDate(model.Factory.CreatedDate, model.Factory.ModifyDate, Convert.ToInt32(keys.branchid));
-            //var quantityGroups = value.GroupBy(x => x.Name);
-            //var quantityList = new List<FactoryQuantity>();
-            //foreach (var item in quantityGroups)
-            //{
-            //    decimal totalkg = 0;
-            //    int customerid = 0;
-            //    foreach (var key in item)
-            //    {
-            //        totalkg += key.Kg;
-            //        customerid = key.factoryid;
-            //    }
-            //    var entity = new FactoryQuantity
-            //    {
-            //        Name = item.Key,
-            //        Totalkg = totalkg,
-            //        factoryid = customerid
-            //    };
-            //    quantityList.Add(entity);
-            //}
-            //var val = quantityList.OrderByDescending(x => x.Totalkg).Select(x => new FactoryQuantity
-            //{
-            //    Totalkg = x.Totalkg,
-            //    Name = x.Name,
-            //    factoryid = x.factoryid
-            //}).ToList();
-            //return View(new AllLayoutViewModel
-            //{
-            //    factoryQuantities = val
-            //});
-            return null;
+            var Authorization = HttpContext.Session.GetString("token");
+            TokenKeys keys = AuthorizationCont.Authorization(Authorization);
+            if (keys == null)
+                return Redirect("/Error/401");
+            var receiptSerive = _receiptService.GetReceiptBeetwenDate(model.Factory.CreatedDate, Convert.ToInt32(keys.branchid), false, model.Factory.ModifyDate);
+            if (receiptSerive.Count() > 0)
+            {
+                receiptSerive.GroupBy(x => x.ReceiptDate).Select(y => new
+                {
+                    ReceiptDate = y.Key,
+                    id = y.Select(x => x.id).FirstOrDefault()
+                }).ToList();
+                var receiptList = receiptSerive.Select(x => new Receipt
+                {
+                    ReceiptDate = x.ReceiptDate,
+                    id = x.id
+                }).ToList();
+                var firstdate = receiptList.OrderByDescending(x => x.ReceiptDate).LastOrDefault();
+                var lastdate = receiptList.OrderByDescending(x => x.ReceiptDate).ToList()[0].ReceiptDate;
+
+                var productQuantity = _factoryQuantityService.GetMostReportByDate(model.Factory.CreatedDate, model.Factory.ModifyDate, 0);
+                var productQuantities = _productQuantityService.GetQuantityBeetwenDate(model.Factory.CreatedDate, model.Factory.ModifyDate);
+
+                var customerReceiptGroup = productQuantities.GroupBy(x => x.ReceiptId).Select(y => new FactoryQuantity
+                {
+                    ReceiptId = y.Key,
+                    Totalprice = y.Sum(x => x.Totalprice)
+                }).ToList();
+
+
+                var group = productQuantity.GroupBy(x => x.Name).Select(y => new ProductQuantity
+                {
+                    Name = y.Key,
+                    Totalkg = y.Sum(x => x.Kg),
+                    Totalprice = y.Sum(x => x.Totalprice),
+                    ReceiptId = y.First().ReceiptId,
+                    CreatedDate = y.First().CreatedDate
+                }).ToList();
+
+                group = group.OrderByDescending(x => x.Totalkg).ToList();
+
+                var receipt = group.GroupBy(x => x.ReceiptId).Select(x => new Receipt
+                {
+                    id = x.Key
+                }).ToList();
+                //Top.Kazanç
+                decimal Earnings = decimal.Zero;
+                decimal EarningsTotal = decimal.Zero;
+                var factoryPaymentCont = _paymentContService.GetPaymentByIsWhat(false);
+
+                foreach (var receiptItem in receipt)
+                {
+                    var data = factoryPaymentCont.FirstOrDefault(x => x.ReceiptId == receiptItem.id);
+                    if (data != null)
+                    {
+                        Earnings += data.TotalPrice;
+                        EarningsTotal += group.Where(x => x.ReceiptId == receiptItem.id).ToList().Sum(x => x.Totalprice);
+                        EarningsTotal = EarningsTotal - Earnings;
+                    }
+                    else
+                    {
+                        EarningsTotal += group.Where(x => x.ReceiptId == receiptItem.id).ToList().Sum(x => x.Totalprice);
+                    }
+                }
+
+
+                ViewBag.Earnings = Earnings;
+                ViewBag.EarningsTotal = EarningsTotal;
+                //Top.Sermaye
+                decimal Capital = decimal.Zero;
+                decimal CapitalTotal = decimal.Zero;
+                var customerPaymentCont = _paymentContService.GetPaymentByIsWhat(true);
+
+                foreach (var receiptItem in customerReceiptGroup)
+                {
+                    var data = customerPaymentCont.FirstOrDefault(x => x.ReceiptId == receiptItem.ReceiptId);
+                    if (data is not null)
+                    {
+                        Capital += data.TotalPrice;
+                        CapitalTotal += customerReceiptGroup.Where(x => x.ReceiptId == receiptItem.ReceiptId).FirstOrDefault().Totalprice;
+                        CapitalTotal = CapitalTotal - Capital;
+                    }
+                    else
+                    {
+                        CapitalTotal += customerReceiptGroup.Where(x => x.ReceiptId == receiptItem.ReceiptId).FirstOrDefault().Totalprice;
+                    }
+
+                }
+                var earning = _expenseDetailService.GetExpenseByDateAndBranchId(model.Factory.CreatedDate, model.Factory.ModifyDate, Convert.ToInt32(keys.branchid));
+                ViewBag.expenseDetailSum = earning.Sum(x => x.Price);
+                ViewBag.Capital = Capital;
+                ViewBag.CapitalTotal = CapitalTotal;
+
+                Capital = Capital + earning.Sum(x => x.Price);
+                ViewBag.SumResult = Earnings - Capital;
+                ViewBag.WaitSumResult = EarningsTotal - CapitalTotal;
+                return View(new AllLayoutViewModel
+                {
+                    productQuantities = group,
+                    TokenKeys = keys
+                });
+
+            }
+            return View(new AllLayoutViewModel
+            {
+                productQuantities = new List<ProductQuantity>(),
+                TokenKeys = keys
+            });
         }
     }
 }

@@ -48,6 +48,10 @@ namespace Fire.UI.Models.AllViewModels
         public Expenses Expenses { get; set; }
         public List<Expenses> ExpenseList { get; set; }
         public List<FactoryAndCustomerViewModel> factoryAndCustomerViewModels { get; set; }
+        public ExpenseDetail ExpenseDetail { get; set; }
+        public ExpenseCategoria expenseCategoria { get; set; }
+        public List<ExpenseDetail> ExpenseDetails { get; set; }
+        public List<ExpenseCategoria> ExpenseCategorias { get; set; }
 
     }
 }

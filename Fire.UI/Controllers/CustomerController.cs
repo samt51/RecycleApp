@@ -150,6 +150,7 @@ namespace Fire.UI.Controllers
                 quantityview.Add(quantity);
 
             }
+            quantityview = quantityview.OrderByDescending(x => x.createdate).ToList();
             var error = HttpContext.Session.GetString("error1");
             if (!string.IsNullOrEmpty(error))
             {
@@ -222,7 +223,7 @@ namespace Fire.UI.Controllers
             string[] val = quantity.Split(',');
             int receiptId = Convert.ToInt32(val[0]);
             decimal amaountPaid = decimal.Zero;
-            var receipt = _paymentContService.GetPaymentByPay(receiptId);
+            var receipt = _paymentContService.GetPaymentByPay(receiptId,true);
             if (receipt != null)
             {
                 amaountPaid = receipt.TotalPrice;
@@ -269,7 +270,7 @@ namespace Fire.UI.Controllers
             var gelenprodutc = HttpContext.Session.GetString("entity");
             var deserilazeproduct = JsonConvert.DeserializeObject<ProductQauntityViewModel>(gelenprodutc);
             var datetime = new DateTime(deserilazeproduct.createdate.Year, deserilazeproduct.createdate.Month, deserilazeproduct.createdate.Day);
-            var payment = _paymentContService.GetPaymentByPay(deserilazeproduct.receiptId);
+            var payment = _paymentContService.GetPaymentByPay(deserilazeproduct.receiptId,true);
             var data = _productQuantityService.GetQuantityByReceiptBy(deserilazeproduct.receiptId);
             int success = 0;
             if (payment != null)
@@ -387,7 +388,7 @@ namespace Fire.UI.Controllers
                 }
                 if (success == 1)
                 {
-                    payment = _paymentContService.GetPaymentByPay(deserilazeproduct.receiptId);
+                    payment = _paymentContService.GetPaymentByPay(deserilazeproduct.receiptId,true);
                     ViewBag.success = "İşlem Başarılı";
                     return View(new AllLayoutViewModel
                     {

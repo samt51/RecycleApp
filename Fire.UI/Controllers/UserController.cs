@@ -59,7 +59,6 @@ namespace Fire.UI.Controllers
                 return Redirect("/Error/401");
             var user = _userService.GetById(Convert.ToInt32(keys.userid));
             user.password = CommondMethod.ConvertDecrypt(user.password);
-         
             HttpContext.Session.SetString("userkey", keys.userid);
             return View(new AllLayoutViewModel
             {
@@ -80,7 +79,12 @@ namespace Fire.UI.Controllers
             use.password = CommondMethod.ConvertToEncrypt(model.User.password);
             use.ModifyDate = DateTime.Now;
             _userService.Update(use);
-            return RedirectToAction("Detail");
+            ViewBag.success = "İşlem Başarılı";
+            return View(new AllLayoutViewModel
+            {
+                User = use,
+                TokenKeys = keys
+            });
         }
     }
 }

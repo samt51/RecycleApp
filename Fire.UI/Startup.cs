@@ -75,6 +75,13 @@ namespace Fire.UI
             services.AddScoped<IBankDal, EfBankDal>();
             services.AddTransient<IBankService, BankManager>();
 
+            services.AddScoped<IExpenseDetailDal, EfExpenseDetailDal>();
+            services.AddTransient<IExpenseDetailService, ExpenseDetailManager>();
+
+
+            services.AddScoped<IExpenseCategoriaDal, EfExpenseCategoriaDal>();
+            services.AddTransient<IExpenseCategoriaService, ExpenseCategoriaManager>();
+
             services.AddScoped<ICheckDal, EfCheckDal>();
             services.AddTransient<ICheckService, CheckManager>();
 

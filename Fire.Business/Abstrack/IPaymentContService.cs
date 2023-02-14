@@ -11,6 +11,7 @@ namespace Fire.Business.Abstrack
         PaymentCont Create(PaymentCont entity);
         void Delete(PaymentCont entity);
         void Update(PaymentCont entity);
-        PaymentCont GetPaymentByPay(int receiptId);
+        PaymentCont GetPaymentByPay(int receiptId, bool IsWhat);
+        List<PaymentCont> GetPaymentByIsWhat(bool IsWhat);
     }
 }

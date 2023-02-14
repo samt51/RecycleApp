@@ -36,9 +36,14 @@ namespace Fire.Business.Concrete
             return _paymentContDal.GetById(id);
         }
 
-        public PaymentCont GetPaymentByPay(int receiptId)
+        public List<PaymentCont> GetPaymentByIsWhat(bool IsWhat)
         {
-            return _paymentContDal.GetPaymentByPay(receiptId);
+            return _paymentContDal.GetPaymentByIsWhat(IsWhat);
+        }
+
+        public PaymentCont GetPaymentByPay(int receiptId, bool IsWhat)
+        {
+            return _paymentContDal.GetPaymentByPay(receiptId,IsWhat);
         }
 
         public void Update(PaymentCont entity)
