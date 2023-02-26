@@ -1,5 +1,6 @@
 ﻿using Fire.DataAccess.Abstrack;
 using Fire.DataAccess.DbConnection;
+using Fire.DataAccess.Models;
 using Fire.DataAccess.Models.DashboardReportModel;
 using Fire.Entity.Concrete;
 using System;
@@ -135,7 +136,7 @@ namespace Fire.DataAccess.Concrete.Ef
                     var prd = factoryProductQuantity.ToList();
 
                     prd.ToList().OrderByDescending(x => x.Kg).Take(5).ToList();
-                    var listProductType = new List<ProductType>();
+                    var listProductType = new List<ProductTypeViewModel>();
                     var totalSalesFactory = new List<Factory>();
                     var factories = db.factories.Where(x => x.İsDelete == false).ToList();
                     var receipts = db.Receipt.Where(x => x.İsDelete == false).ToList();
@@ -143,10 +144,10 @@ namespace Fire.DataAccess.Concrete.Ef
                     foreach (var item in factoryProductQuantity)
                     {
 
-                        listProductType.Add(new ProductType
+                        listProductType.Add(new ProductTypeViewModel
                         {
                             Name = item.Name,
-                            kgPrice = item.Kg
+                            Price = item.Kg
                         });
                         sayac++;
                         var factoryname = factories.FirstOrDefault(x => x.id == receipts.FirstOrDefault(x => x.id == item.ReceiptId).CustomerId);
@@ -192,7 +193,7 @@ namespace Fire.DataAccess.Concrete.Ef
 
 
                     }
-                    entity.TopSellingGoods = listProductType.OrderByDescending(x => x.kgPrice).ToList();
+                    entity.TopSellingGoods = listProductType.OrderByDescending(x => x.Price).ToList();
                     entity.TopSellingCompanies = totalSalesFactory;
 
 

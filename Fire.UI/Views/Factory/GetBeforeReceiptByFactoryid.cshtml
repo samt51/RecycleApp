@@ -28,7 +28,7 @@
                                     @foreach (var customer in Model.factoryQuantityViewModels)
                                     {
                                         <tr class="Search">
-                                            <td>@customer.createdate.ToString("ddd-MM-yyyy")</td>
+                                            <td>@customer.createdate.ToString("dd-MM-yyyy")</td>
                                             <td>@customer.quantity</td>
                                             <td style="text-align:right">
                                                 <a href="/Factory/GetFisByid/?quantity=@CommondMethod.ConvertToEncrypt(@customer.quantity.ToString() +"," +customer.createdate.ToShortDateString())" name="id" class="btn btn-inverse-success btn-fw btn-sm">Göster</a>

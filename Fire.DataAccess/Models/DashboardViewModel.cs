@@ -50,7 +50,7 @@ namespace Fire.DataAccess.Models.DashboardReportModel
         /// <summary>
         /// En Çok Satılan Mallar
         /// </summary>
-        public List<ProductType> TopSellingGoods { get; set; } = new List<ProductType>();
+        public List<ProductTypeViewModel> TopSellingGoods { get; set; } = new List<ProductTypeViewModel>();
         /// <summary>
         /// En Çok Satış Yapılan Firmalar
         /// </summary>

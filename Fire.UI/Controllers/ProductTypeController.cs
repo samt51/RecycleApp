@@ -21,7 +21,8 @@ namespace Fire.UI.Controllers
         private readonly IStockTrackingService _stockTrackingService;
         private readonly IPaymentContService _paymentContService;
         private readonly IReceiptService _receiptService;
-        public ProductTypeController(IPaymentContService paymentContService, IStockTrackingService stockTrackingService, IProductQuantityService productQuantityService
+        private readonly IProductPricesService _productPricesService;
+        public ProductTypeController(IPaymentContService paymentContService, IProductPricesService productPricesService, IStockTrackingService stockTrackingService, IProductQuantityService productQuantityService
             , IProductQuantityService productCategoriaService, IProductTypeService productTypeService, IReceiptService receiptService)
         {
             _productTypeService = productTypeService;
@@ -30,6 +31,7 @@ namespace Fire.UI.Controllers
             _stockTrackingService = stockTrackingService;
             _paymentContService = paymentContService;
             _receiptService = receiptService;
+            _productPricesService = productPricesService;
         }
         [HttpGet]
         public IActionResult ProductTypeAdd()
@@ -53,12 +55,26 @@ namespace Fire.UI.Controllers
             var entity = new ProductType
             {
                 CreatedDate = DateTime.Now,
-                kgPrice = Convert.ToDecimal(model.ProductType.kgPrice.ToString().Replace(",", ".")),
                 ModifyDate = DateTime.Now,
                 Name = model.ProductType.Name,
                 İsDelete = false
             };
-            _productTypeService.Create(entity);
+            var product = _productTypeService.Create(entity);
+            var price = new ProductPrices
+            {
+                Price = "0",
+                ProductId = product.id,
+                IsWhat = true,
+            };
+            _productPricesService.Create(price);
+
+            price = new ProductPrices
+            {
+                Price = "0",
+                ProductId = product.id,
+                IsWhat = false,
+            };
+            _productPricesService.Create(price);
             return RedirectToAction("List");
         }
         [HttpGet]
@@ -86,7 +102,7 @@ namespace Fire.UI.Controllers
             var entity = new ProductType
             {
                 IsWhat = 2,
-                kgPrice = productcategoria.kgPrice,
+                //kgPrice = productcategoria.kgPrice,
                 Name = productcategoria.Name,
                 CreatedDate = DateTime.Now,
                 ModifyDate = DateTime.Now,
@@ -125,7 +141,7 @@ namespace Fire.UI.Controllers
             productid = CommondMethod.ConvertDecrypt(productid.ToString());
             var product = _productTypeService.GetById(Convert.ToInt32(productid));
             product.Name = model.ProductType.Name;
-            product.kgPrice = model.ProductType.kgPrice;
+            //product.kgPrice = model.ProductType.kgPrice;
             product.ModifyDate = System.DateTime.Now;
             _productTypeService.Update(product);
             return RedirectToAction("List");
@@ -140,14 +156,23 @@ namespace Fire.UI.Controllers
         [HttpPost]
         public List<string> deneme()
         {
-            var asdasd = _productTypeService.GetAll();
+            var products = _productTypeService.GetAll();
+            var query = from d1 in products.Where(x => x.İsDelete == false)
+                        join d2 in _productPricesService.GetAll() on d1.id equals d2.ProductId into gj
+                        from subget in gj.DefaultIfEmpty()
+                        where subget.İsDelete == false && subget.IsWhat == true
+                        select new
+                        {
+                            Name = d1.Name,
+                            Price = subget.Price == null ? "0" : subget.Price.ToString(),
+                        };
             //obje türünde session doldurmak
-            HttpContext.Session.SetString("sessionProductType", JsonConvert.SerializeObject(asdasd));
-            JsonConvert.SerializeObject(asdasd);
+            HttpContext.Session.SetString("sessionProductType", JsonConvert.SerializeObject(products));
+            JsonConvert.SerializeObject(products);
             List<string> dd = new List<string>();
-            foreach (var item in asdasd)
+            foreach (var item in query.ToList())
             {
-                dd.Add(item.Name + "," + item.kgPrice);
+                dd.Add(item.Name + "," + item.Price);
             }
             return dd;
         }
@@ -218,6 +243,7 @@ namespace Fire.UI.Controllers
                 var pric = 0.0;
 
                 var productypeid = _productTypeService.GetProductTypeByName(keyname);
+                var price = _productPricesService.GetPriceByProductId(productypeid.id, true);
                 for (int j = 1; j < value.Count; j++)
                 {
                     if (string.IsNullOrEmpty(value[j]))
@@ -225,10 +251,9 @@ namespace Fire.UI.Controllers
                     if (Convert.ToDecimal(value[j].Replace(",", ".")) > 0)
                     {
                         if (Convert.ToDecimal(value[0]) == 0)
-                            pric = Convert.ToDouble(productypeid.kgPrice);
+                            pric = Convert.ToDouble(price.Price);
                         else
-                            pric = Convert.ToDouble(value[0]);
-
+                            pric = Convert.ToDouble(value[0].Replace(",", "."));
                         totalkg += Convert.ToDecimal(value[j]);
                         totalprice += Convert.ToDecimal(value[j]) * Convert.ToDecimal(pric);
                         var entity = new ProductQuantity
@@ -243,7 +268,7 @@ namespace Fire.UI.Controllers
                             İsDelete = false,
                             CreatedDate = model.Factory.CreatedDate,
                             ModifyDate = DateTime.Now,
-                            ProductPrice = productypeid.kgPrice,
+                            ProductPrice = Convert.ToDecimal(price.Price),
 
 
                         };
@@ -315,13 +340,14 @@ namespace Fire.UI.Controllers
                     var firstData = productquantity.Where(x => x.Name == splitKey[0]).FirstOrDefault();
                     var valueData = value.ToList();
                     var productType = _productTypeService.GetProductTypeByName(splitKey[0].ToString());
+                    var productPrice = _productPricesService.GetPriceByProductId(productType.id, true);
                     if (Convert.ToDecimal(value[0]) == 0 || string.IsNullOrEmpty(value[0]))
                     {
-                        price = productType.kgPrice;
+                        price = Convert.ToDecimal(productPrice.Price);
                     }
                     else
                     {
-                        price = Convert.ToDecimal(value[0]);
+                        price = Convert.ToDecimal(value[0].Replace(",", "."));
                     }
                     value.RemoveAt(0);
                     for (int k = 0; k < value.Count; k++)
@@ -346,7 +372,7 @@ namespace Fire.UI.Controllers
                                 Totalprice = Convert.ToDecimal(value[k]) * price,
                                 ReceiptId = receiptData.id,
                                 UnitPrice = price,
-                                ProductPrice = productType.kgPrice,
+                                ProductPrice = Convert.ToDecimal(productPrice.Price),
                                 productTypeid = productType.id,
                                 Kg = Convert.ToDecimal(value[k]),
                                 İsDelete = false,
@@ -397,7 +423,7 @@ namespace Fire.UI.Controllers
                                         Name = splitKey[0],
                                         Totalkg = 0,
                                         Totalprice = Convert.ToDecimal(value[k]) * Convert.ToDecimal(price),
-                                        ProductPrice = productType.kgPrice,
+                                        ProductPrice = Convert.ToDecimal(productPrice.Price),
                                         UnitPrice = Convert.ToDecimal(price),
                                         ReceiptId = receiptData.id,
                                         productTypeid = productType.id,
@@ -434,6 +460,7 @@ namespace Fire.UI.Controllers
                                             eksi = data[k].Kg - Convert.ToDecimal(value[k]);
                                             data[k].Kg = Convert.ToDecimal(value[k]);
                                             data[k].ModifyDate = DateTime.Now;
+                                            data[k].Totalprice = data[k].Kg * price;
                                             _productQuantityService.Update(data[k]);
                                             var stockcontroll = _stockTrackingService.GetStockByProductId(productType.id, Convert.ToInt32(keys.branchid));
                                             stockcontroll.totalkg = stockcontroll.totalkg - eksi;
@@ -446,6 +473,7 @@ namespace Fire.UI.Controllers
                                             eksi = Convert.ToDecimal(value[k]) - data[k].Kg;
                                             data[k].Kg = Convert.ToDecimal(value[k]);
                                             data[k].ModifyDate = DateTime.Now;
+                                            data[k].Totalprice = data[k].Kg * price;
                                             _productQuantityService.Update(data[k]);
                                             var stockcontroll = _stockTrackingService.GetStockByProductId(productType.id, Convert.ToInt32(keys.branchid));
                                             stockcontroll.totalkg = stockcontroll.totalkg + eksi;

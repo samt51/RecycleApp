@@ -9,7 +9,6 @@ namespace Fire.Entity.Concrete
         [Key]
         public int id { get; set; }
         public string Name { get; set; }
-        public decimal kgPrice { get; set; }
         /// <summary>
         /// 1 customer, 2 ise fabrika 3 ortak
         /// </summary>

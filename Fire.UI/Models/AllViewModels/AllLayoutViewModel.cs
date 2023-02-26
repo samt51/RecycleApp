@@ -52,6 +52,7 @@ namespace Fire.UI.Models.AllViewModels
         public ExpenseCategoria expenseCategoria { get; set; }
         public List<ExpenseDetail> ExpenseDetails { get; set; }
         public List<ExpenseCategoria> ExpenseCategorias { get; set; }
+        public ProductPriceByProduct productPriceByProduct { get; set; }
 
     }
 }

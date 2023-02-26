@@ -2,9 +2,12 @@
 {
     public class PaymentViewModel
     {
-        public decimal unPaid { get; set; }
-        public decimal amountPaid { get; set; }
-        public decimal totalPrice { get; set; }
-        public decimal giveMany { get; set; }
+        public double unPaid { get; set; }
+        public double amountPaid { get; set; }
+        public double totalPrice { get; set; }
+        public double giveMany { get; set; }
+
+
+
     }
 }

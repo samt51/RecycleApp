@@ -22,9 +22,11 @@ namespace Fire.UI.Controllers
         private readonly IStockTrackingService _stockTrackingService;
         private readonly IPaymentContService _paymentContService;
         private readonly IReceiptService _receiptService;
-        public FactoryController(IPaymentContService paymentContService, IStockTrackingService stockTrackingService, IFactoryQuantityService factoryQuantityService,
+        private readonly IProductPricesService _productPricesService;
+        public FactoryController(IProductPricesService productPricesService, IPaymentContService paymentContService, IStockTrackingService stockTrackingService, IFactoryQuantityService factoryQuantityService,
             IProductTypeService productTypeService, IFactoryService factoryservice, IReceiptService receiptService)
         {
+            _productPricesService = productPricesService;
             _factoryservice = factoryservice;
             _factoryQuantityService = factoryQuantityService;
             _productTypeService = productTypeService;
@@ -207,20 +209,29 @@ namespace Fire.UI.Controllers
                 var s = keyvalue.ToString().IndexOf("_");
                 keyvalue = keyvalue.Remove(s);
                 var productypeid = _productTypeService.GetProductTypeByName(keyname);
+                var productPrice = _productPricesService.GetPriceByProductId(productypeid.id, false);
                 decimal val = 0;
                 decimal tpl = 0;
                 int tok = 0;
 
                 if (value.Count > 0)
                 {
-                    
+                    var stockcontroll = new StockTracking();
 
-                    var stockcontroll = _stockTrackingService.GetStockByProductId(productypeid.id, Convert.ToInt32(keys.branchid));
-                    if (stockcontroll is null)
+                    if (Convert.ToDecimal(value[1]) > 0)
                     {
-                        ViewBag.message = $"{productypeid.Name} ürünün stokta mevcut değildir.Kontrol ediniz";
-                        return View(new AllLayoutViewModel { TokenKeys = keys }); ;
+                        stockcontroll = _stockTrackingService.GetStockByProductId(productypeid.id, Convert.ToInt32(keys.branchid));
+                        if (stockcontroll is null)
+                        {
+                            ViewBag.message = $"{productypeid.Name} ürünün stokta mevcut değildir.Kontrol ediniz";
+                            return View(new AllLayoutViewModel { TokenKeys = keys }); ;
+                        }
                     }
+
+
+
+
+
 
                     for (int k = 1; k < value.Count; k++)
                     {
@@ -252,9 +263,9 @@ namespace Fire.UI.Controllers
                             if (Convert.ToDecimal(value[j].Replace(",", ".")) > 0)
                             {
                                 if (Convert.ToDecimal(value[0]) == 0)
-                                    val = Convert.ToDecimal(productypeid.kgPrice);
+                                    val = Convert.ToDecimal(productPrice.Price);
                                 else
-                                    val = Convert.ToDecimal(value[0]);
+                                    val = Convert.ToDecimal(value[0].Replace(",", "."));
 
                                 stockcontroll.totalkg = stockcontroll.totalkg - Convert.ToDecimal(value[j]);
                                 stockcontroll.ModifyDate = DateTime.Now;
@@ -271,7 +282,7 @@ namespace Fire.UI.Controllers
                                     CreatedDate = allLayoutViewModel.Factory.CreatedDate,
                                     ModifyDate = DateTime.Now,
                                     Kg = Convert.ToDecimal(value[j]),
-                                    ProductPrice = productypeid.kgPrice,
+                                    ProductPrice = Convert.ToDecimal(productPrice.Price),
                                 };
                                 _factoryQuantityService.Create(entity);
                                 _stockTrackingService.Update(stockcontroll);
@@ -289,8 +300,8 @@ namespace Fire.UI.Controllers
                 }
 
             }
-            HttpContext.Session.SetString("factoryError", "İşlem Başarılı");
-            return Redirect("/Factory/GetFisByid?quantity=" + CommondMethod.ConvertToEncrypt(id.ToString() + "," + allLayoutViewModel.Factory.CreatedDate.ToShortDateString()));
+
+            return Redirect("/Factory/GetBeforeReceiptByFactoryid/" + CommondMethod.ConvertToEncrypt(id.ToString()));
 
         }
         [HttpPost]
@@ -330,13 +341,14 @@ namespace Fire.UI.Controllers
                     var firstData = productquantity.Where(x => x.Name == splitKey[0]).FirstOrDefault();
                     var valueData = value.ToList();
                     var productType = _productTypeService.GetProductTypeByName(splitKey[0].ToString());
+                    var productPrice = _productPricesService.GetPriceByProductId(productType.id, false);
                     if (Convert.ToDecimal(value[0]) == 0 || string.IsNullOrEmpty(value[0]))
                     {
-                        price = productType.kgPrice;
+                        price = Convert.ToDecimal(productPrice.Price);
                     }
                     else
                     {
-                        price = Convert.ToDecimal(value[0]);
+                        price = Convert.ToDecimal(value[0].Replace(",", "."));
                     }
 
 
@@ -392,7 +404,7 @@ namespace Fire.UI.Controllers
                                     CreatedDate = updated.date,
                                     ModifyDate = DateTime.Now,
                                     Kg = Convert.ToDecimal(value[j]),
-                                    ProductPrice = productType.kgPrice
+                                    ProductPrice = Convert.ToDecimal(productPrice.Price)
                                 };
 
                                 if (stockcontroll == null)
@@ -438,7 +450,7 @@ namespace Fire.UI.Controllers
                                             Name = splitKey[0],
                                             Totalkg = 0,
                                             Totalprice = Convert.ToDecimal(value[j]) * price,
-                                            ProductPrice = productType.kgPrice,
+                                            ProductPrice = Convert.ToDecimal(productPrice.Price),
                                             UnitPrice = Convert.ToDecimal(price),
                                             ReceiptId = receiptData.id,
                                             factoryproducttypeid = productType.id,
@@ -472,6 +484,7 @@ namespace Fire.UI.Controllers
                                             eksi = data[j].Kg - Convert.ToDecimal(value[j]);
                                             data[j].Kg = Convert.ToDecimal(value[j]);
                                             data[j].ModifyDate = DateTime.Now;
+                                            data[j].Totalprice= data[j].Kg * price;
                                             _factoryQuantityService.Update(data[j]);
                                             stockcontroll.totalkg = stockcontroll.totalkg + eksi;
                                             stockcontroll.ModifyDate = DateTime.Now;
@@ -483,6 +496,7 @@ namespace Fire.UI.Controllers
                                             eksi = Convert.ToDecimal(value[j]) - data[j].Kg;
                                             data[j].Kg = Convert.ToDecimal(value[j]);
                                             data[j].ModifyDate = DateTime.Now;
+                                            data[j].Totalprice = data[j].Kg * price;
                                             _factoryQuantityService.Update(data[j]);
 
                                             stockcontroll.totalkg = stockcontroll.totalkg - eksi;
@@ -550,7 +564,7 @@ namespace Fire.UI.Controllers
                 };
                 quantityview.Add(quantity);
             }
-            quantityview = quantityview.OrderByDescending(x => x.createdate).ToList();
+            quantityview = quantityview.OrderByDescending(x => x.createdate).OrderBy(x => x.quantity).ToList();
             return View(new AllLayoutViewModel
             {
                 factoryQuantityViewModels = quantityview,
@@ -580,7 +594,7 @@ namespace Fire.UI.Controllers
                 quantity = Convert.ToInt32(quantity)
             };
             var json = JsonConvert.SerializeObject(update);
-            HttpContext.Session.SetString("updatefactory", json);
+     
 
             var list = _receiptService.GetReceiptByCustomerId(Convert.ToInt32(id), Convert.ToInt32(keys.branchid), false);
 
@@ -590,12 +604,20 @@ namespace Fire.UI.Controllers
             ViewBag.totalprice = s;
             ViewBag.quantity = quantity;
             ViewBag.date = date.ToShortDateString();
+            HttpContext.Session.SetString("updatefactory", json);
             var message = HttpContext.Session.GetString("factoryError");
-            if (!string.IsNullOrEmpty(message) && message != "00")
+            if (!string.IsNullOrEmpty(message))
             {
                 ViewBag.error = message;
-                HttpContext.Session.SetString("factoryError", "00");
+                return View(new AllLayoutViewModel
+                {
+                    TokenKeys = keys,
+                    factoryQuantities = d,
+                    productTypes = _productTypeService.GetAll(),
+
+                });
             }
+
 
             return View(new AllLayoutViewModel
             {
@@ -616,7 +638,7 @@ namespace Fire.UI.Controllers
             string[] val = quantity.Split(',');
             int receiptId = Convert.ToInt32(val[0]);
             decimal amaountPaid = decimal.Zero;
-            var receipt = _paymentContService.GetPaymentByPay(receiptId,false);
+            var receipt = _paymentContService.GetPaymentByPay(receiptId, false);
             if (receipt != null)
             {
                 amaountPaid = receipt.TotalPrice;
@@ -645,14 +667,14 @@ namespace Fire.UI.Controllers
                 TokenKeys = keys,
                 PaymentViewModel = new PaymentViewModel
                 {
-                    totalPrice = paymentlist.Sum(x => x.Totalprice),
-                    unPaid = paymentlist.Sum(x => x.Totalprice) - amaountPaid,
-                    amountPaid = amaountPaid
+                    totalPrice = Convert.ToDouble( paymentlist.Sum(x => x.Totalprice)),
+                    unPaid = Convert.ToDouble(paymentlist.Sum(x => x.Totalprice) - amaountPaid),
+                    amountPaid = Convert.ToDouble(amaountPaid)
                 }
             }); ;
         }
         [HttpPost]
-        public IActionResult FullPaid(string deger)
+        public IActionResult FullPaid(decimal deger)
         {
             var Authorization = HttpContext.Session.GetString("token");
             TokenKeys keys = AuthorizationCont.Authorization(Authorization);
@@ -662,12 +684,13 @@ namespace Fire.UI.Controllers
             var value = Convert.ToDecimal(deger);
             var deserilazeproduct = JsonConvert.DeserializeObject<ProductQauntityViewModel>(gelenprodutc);
             var datetime = new DateTime(deserilazeproduct.createdate.Year, deserilazeproduct.createdate.Month, deserilazeproduct.createdate.Day);
-            var payment = _paymentContService.GetPaymentByPay(deserilazeproduct.receiptId,false);
+            var payment = _paymentContService.GetPaymentByPay(deserilazeproduct.receiptId, false);
             var data = _factoryQuantityService.GetFactoryQuantitiesByFactoryid(deserilazeproduct.receiptId);
             int success = 0;
             if (payment != null)
             {
-                if (value >= 1 && value <= payment.TotalPrice && payment.IsPaid == false)
+                decimal sum = payment.TotalPrice + value;
+                if (value >= 1 && sum <= data.Sum(x => x.Totalprice) && payment.IsPaid == false)
                 {
                     payment.TotalPrice += value;
                     var total = data.Sum(x => x.Totalprice);
@@ -687,9 +710,9 @@ namespace Fire.UI.Controllers
                         paymentCont = payment,
                         PaymentViewModel = new PaymentViewModel
                         {
-                            totalPrice = data.Sum(x => x.Totalprice),
-                            unPaid = data.Sum(x => x.Totalprice) - payment.TotalPrice,
-                            amountPaid = payment.TotalPrice
+                            totalPrice = Convert.ToDouble(data.Sum(x => x.Totalprice)),
+                            unPaid = Convert.ToDouble(data.Sum(x => x.Totalprice) - payment.TotalPrice),
+                            amountPaid = Convert.ToDouble(payment.TotalPrice)
                         }
                     });
                 }
@@ -702,9 +725,9 @@ namespace Fire.UI.Controllers
                         paymentCont = payment,
                         PaymentViewModel = new PaymentViewModel
                         {
-                            totalPrice = data.Sum(x => x.Totalprice),
-                            unPaid = data.Sum(x => x.Totalprice) - payment.TotalPrice,
-                            amountPaid = payment.TotalPrice
+                            totalPrice = Convert.ToDouble(data.Sum(x => x.Totalprice)),
+                            unPaid = Convert.ToDouble(data.Sum(x => x.Totalprice) - payment.TotalPrice),
+                            amountPaid = Convert.ToDouble(payment.TotalPrice)
                         }
                     });
 
@@ -713,8 +736,8 @@ namespace Fire.UI.Controllers
             }
             else
             {
-                var total = data.Sum(x => x.Totalprice);
-                if (value >= 1 && value <= total)
+                var total = Convert.ToDouble(data.Sum(x => x.Totalprice));
+                if (value >= 1 && Convert.ToDouble(value) <= total)
                 {
                     var entity = new PaymentCont
                     {
@@ -727,7 +750,7 @@ namespace Fire.UI.Controllers
                         IsWhat = false
                     };
 
-                    if (entity.TotalPrice == total)
+                    if (Convert.ToDouble(entity.TotalPrice) == total)
                     {
                         entity.IsPaid = true;
                     }
@@ -744,15 +767,15 @@ namespace Fire.UI.Controllers
                         paymentCont = payment,
                         PaymentViewModel = new PaymentViewModel
                         {
-                            totalPrice = data.Sum(x => x.Totalprice),
-                            unPaid = data.Sum(x => x.Totalprice),
+                            totalPrice = Convert.ToDouble(data.Sum(x => x.Totalprice)),
+                            unPaid = Convert.ToDouble(data.Sum(x => x.Totalprice)),
                             amountPaid = 0
                         }
                     });
                 }
                 if (success == 1)
                 {
-                    payment = _paymentContService.GetPaymentByPay(deserilazeproduct.receiptId,false);
+                    payment = _paymentContService.GetPaymentByPay(deserilazeproduct.receiptId, false);
                     ViewBag.success = "İşlem Başarılı";
                     return View(new AllLayoutViewModel
                     {
@@ -760,9 +783,9 @@ namespace Fire.UI.Controllers
                         paymentCont = payment,
                         PaymentViewModel = new PaymentViewModel
                         {
-                            totalPrice = data.Sum(x => x.Totalprice),
-                            unPaid = data.Sum(x => x.Totalprice) - payment.TotalPrice,
-                            amountPaid = payment.TotalPrice
+                            totalPrice = Convert.ToDouble(data.Sum(x => x.Totalprice)),
+                            unPaid = Convert.ToDouble(data.Sum(x => x.Totalprice) - payment.TotalPrice),
+                            amountPaid = Convert.ToDouble(payment.TotalPrice)
                         }
                     });
                 }
@@ -774,9 +797,9 @@ namespace Fire.UI.Controllers
                 paymentCont = payment,
                 PaymentViewModel = new PaymentViewModel
                 {
-                    totalPrice = data.Sum(x => x.Totalprice),
-                    unPaid = data.Sum(x => x.Totalprice) - (payment == null ? 0 : payment.TotalPrice),
-                    amountPaid = payment == null ? 0 : payment.TotalPrice,
+                    totalPrice = Convert.ToDouble(data.Sum(x => x.Totalprice)),
+                    unPaid = Convert.ToDouble(data.Sum(x => x.Totalprice) - (payment == null ? 0 : payment.TotalPrice)),
+                    amountPaid = Convert.ToDouble(payment == null ? 0 : payment.TotalPrice),
                 }
             });
         }
@@ -852,7 +875,7 @@ namespace Fire.UI.Controllers
                         {
                             var product = new FactoryQuantity
                             {
-                                Totalprice = data[i].Totalprice,
+                                Totalprice = data[i].Kg * data[i].UnitPrice,
                                 Kg = data[i].Kg,
                                 ProductPrice = data[i].ProductPrice,
                             };
@@ -868,17 +891,100 @@ namespace Fire.UI.Controllers
                 }
                 else
                 {
-
+                    var productPrice = _productPricesService.GetPriceByProductId(item, false);
                     factoryquantity.productId = productType.FirstOrDefault(x => x.id == item).id;
-                    factoryquantity.name = String.Concat(productType.FirstOrDefault(x => x.id == item).Name, ",", productType.FirstOrDefault(x => x.id == item).kgPrice);
+                    factoryquantity.name = String.Concat(productType.FirstOrDefault(x => x.id == item).Name, ",", productPrice.Price);
                     factoryquantity.total = 0;
-                    factoryquantity.price = productType.FirstOrDefault(x => x.id == item).kgPrice;
+                    factoryquantity.price = Convert.ToDecimal(productPrice.Price);
                     factoryquantity.factoryQuantities = new List<FactoryQuantity>();
                 }
                 factoryquantityList.Add(factoryquantity);
             }
             ViewBag.totalMoney = totalMoney;
             return factoryquantityList.OrderBy(x => x.productId).ToList();
+        }
+        [HttpGet]
+        public IActionResult SetPriceByProductId(int id)
+        {
+            var Authorization = HttpContext.Session.GetString("token");
+            TokenKeys keys = AuthorizationCont.Authorization(Authorization);
+            if (keys == null)
+                return Redirect("/Error/401");
+            var data = _productTypeService.GetById(id);
+            if (data == null)
+            {
+                ViewBag.error = "Ürün Bulunamadı";
+                return View();
+            }
+            var price = _productPricesService.GetPriceByProductId(id, false);
+
+            return View(new AllLayoutViewModel
+            {
+                TokenKeys = keys,
+                productPriceByProduct = new ProductPriceByProduct
+                {
+                    Price = price != null ? price.Price.Replace(",", ".") : "0",
+                    Name = data.Name
+                }
+            });
+        }
+        [HttpPost]
+        public IActionResult SetPriceByProductId(AllLayoutViewModel request, int i)
+        {
+            var Authorization = HttpContext.Session.GetString("token");
+            TokenKeys keys = AuthorizationCont.Authorization(Authorization);
+            if (keys == null)
+                return Redirect("/Error/401");
+            var id = HttpContext.Request.RouteValues["id"];
+            var price = _productPricesService.GetPriceByProductId(Convert.ToInt32(id), false);
+            if (price == null)
+            {
+                var entity = new ProductPrices
+                {
+                    IsWhat = false,
+                    Price = request.productPriceByProduct.Price.Replace(",", "."),
+                    ProductId = Convert.ToInt32(id),
+                };
+                _productPricesService.Create(entity);
+                return RedirectToAction("List", "ProductType");
+            }
+            if (request.productPriceByProduct.Price != price.Price)
+            {
+                price.İsDelete = true;
+                _productPricesService.Update(price);
+                price.Id = 0;
+                price.Price = request.productPriceByProduct.Price.Replace(",", ".");
+                price.İsDelete = false;
+                _productPricesService.Create(price);
+            }
+
+
+            return RedirectToAction("List", "ProductType");
+
+
+        }
+
+        [HttpPost]
+        public List<string> ProductList()
+        {
+            var products = _productTypeService.GetAll();
+            var query = from d1 in products.Where(x => x.İsDelete == false)
+                        join d2 in _productPricesService.GetAll() on d1.id equals d2.ProductId
+                        where d2.İsDelete == false && d2.IsWhat == false
+                        select new
+                        {
+                            Name = d1.Name,
+                            Price = d2.Price,
+                        };
+            //obje türünde session doldurmak
+            HttpContext.Session.SetString("sessionProductType", JsonConvert.SerializeObject(products));
+            JsonConvert.SerializeObject(products);
+            List<string> dd = new List<string>();
+            foreach (var item in query.ToList())
+            {
+                dd.Add(item.Name + "," + item.Price);
+            }
+            return dd;
         }
     }
 }

@@ -38,13 +38,13 @@
                         <form asp-controller="User" asp-action="Detail" class="forms-sample" name="formadd" method="post" enctype="multipart/form-data">
                             <div class="form-group">
                                 <label for="exampleInputPassword4">Email</label>
-                                <input class="form-control whiteColor" placeholder="Email" id="giveMany" type="text" asp-for="User.email" required />
+                                <input class="form-control whiteColor" placeholder="Email" style="background-color:black;" id="giveMany" type="text" asp-for="User.email" required disabled="disabled" />
                             </div>
                              <div class="form-group">
                                 <label for="exampleInputPassword4">Şifre</label>
-                                <input class="form-control whiteColor" placeholder="Şifr" id="giveMany" type="password" asp-for="User.password" required />
+                                <input class="form-control whiteColor" style="background-color:black;" placeholder="Şifr" id="giveMany" type="password" asp-for="User.password" required disabled="disabled" />
                             </div>
-                            <button type="submit" class="btn btn-primary mr-2">Kaydet</button>
+                          @*  <button type="submit" class="btn btn-primary mr-2">Kaydet</button>*@
                         </form>
                     </div>
                 </div>

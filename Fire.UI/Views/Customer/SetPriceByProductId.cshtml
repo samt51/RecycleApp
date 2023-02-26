@@ -1,8 +1,9 @@
 ﻿@model AllLayoutViewModel
 @{
-    ViewData["Title"] = "Update";
+    ViewData["Title"] = "SetPriceByProductId";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 
 <head>
     <style>
@@ -17,7 +18,7 @@
 <div class="main-panel">
     <div class="content-wrapper">
         <div class="page-header">
-            <h3 class="page-title"> Ürün Güncelleme </h3>
+            <h3 class="page-title"> Ürün Fiyat </h3>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                 </ol>
@@ -32,14 +33,14 @@
                         {
                             <div class="alert-danger">@ViewBag.error</div>
                         }
-                        <form asp-controller="ProductType" asp-action="Update" name="formadd" method="post" enctype="multipart/form-data">
+                        <form asp-controller="Customer" asp-action="SetPriceByProductId" name="formadd" method="post" enctype="multipart/form-data">
                             <div class="form-group">
                                 <label for="exampleInputName1">Ürün</label>
-                                <input type="text" class="form-control whiteColor" placeholder="Ürün" asp-for="ProductType.Name" id="checkNo" required />
+                                <input type="text" class="form-control whiteColor" style="background-color:black;" placeholder="Ürün" asp-for="productPriceByProduct.Name" id="checkNo" required disabled="disabled" />
                             </div>
                             <div class="form-group">
                                 <label for="exampleInputName1">Fiyat</label>
-                               @* <input type="text" class="form-control whiteColor" placeholder="Ürün" asp-for="" id="giveMany" required />*@
+                                <input type="text" class="form-control whiteColor" placeholder="Fiyat" id="giveMany" asp-for="productPriceByProduct.Price" required />
                             </div>
                             <button type="submit" class="btn btn-primary mr-2">Kaydet</button>
                         </form>
@@ -51,8 +52,6 @@
 </div>
 
 
-
-
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/snippets/javascript.min.js"></script>
 <script src="/lib/jquery/dist/jquery.min.js"></script>
 <script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
@@ -60,11 +59,8 @@
 
 <script>
 
-    var price = document.getElementById('giveMany').value;
-
-    document.getElementById('giveMany').value = formatMyMoney(price);
-
-
+    var SumResult = document.getElementById("giveMany");
+    SumResult.innerHTML = formatMyMoney(SumResult.innerHTML);
 
     function formatMyMoney(price) {
 
@@ -79,9 +75,6 @@
         return formattedOutput.format(price).replace(currency_symbol, '')
     }
 
-    //function myfocus(x) {
-    //    x.style.background = "yellow";
-    //}
 
     $('#giveMany').keyup(function(event) {
 

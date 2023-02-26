@@ -174,5 +174,14 @@ namespace Fire.UI.Models
                 return "";
             return data.name;
         }
+        public static string PriceToProduct(int id, bool IsWhat)
+        {
+            var data = db.productPrices.Where(x => x.ProductId == id && x.IsWhat == IsWhat && x.İsDelete == false).FirstOrDefault();
+            if (data == null)
+            {
+                return "0";
+            }
+            return data.Price.Replace(",", ".");
+        }
     }
 }

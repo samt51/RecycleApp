@@ -14,13 +14,13 @@
     {
         <tr>
             <td>@customer.Name</td>
-            <td>@customer.kgPrice</td>
+            <td>@Functions.PriceToProduct(customer.id,true)</td>
 
             <td style="text-align:right">
                 <a href="/ProductCategoria/Update/@customer.id" name="id" class="btn btn-warning" style="margin-right:6px !important;" title="Edit">Güncelle<i class="fa fa-edit"></i></a>
 
                 @*    <a href="/Locations/GetByTrucksByLocation/@PasswordHash.ConvertToEncryp(items.id)" name="truckid" style="margin-right:6px !important;" class="btn btn-info" title="Current Location"><i class="fa fa-map"></i></a>
-                *@
+            *@
                 <form action="/ProductCategoria/Delete" method="post" style="display:inline">
                     <input type="hidden" name="id" value="@customer.id" />
                     <button type="submit" class="btn btn-danger js-sweetalert" style="margin-right:6px !important;" data-type="confirm" title="Delete">Sil<i class="fa fa-trash-o"></i></button>

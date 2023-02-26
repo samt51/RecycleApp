@@ -19,7 +19,11 @@
         }
 
         #giveMany {
-            color:white;
+            color: white;
+        }
+
+        #giveManyyy {
+            color: white;
         }
     </style>
 </head>
@@ -49,11 +53,11 @@
                         <form class="forms-sample" asp-controller="Customer" asp-action="FullPaid" name="formadd" method="post" enctype="multipart/form-data">
                             <div class="form-group">
                                 <label for="exampleInputName1">Toplam  Ödenecek Tutar</label>
-                                <input type="text" class="form-control" value="@Model.PaymentViewModel.totalPrice" name="currency-field" id="currency-field" disabled="disabled" placeholder="₺1,000,000.00" />
+                                <input type="text" class="form-control" value="@Model.PaymentViewModel.totalPrice" id="currency-field" name="currency-field" disabled="disabled" placeholder="₺1,000,000.00" />
                             </div>
                             <div class="form-group">
                                 <label for="exampleInputEmail3">Ödenmiş Tutar</label>
-                                <input type="text" class="form-control" value="@Model.PaymentViewModel.amountPaid" disabled="disabled" name="currency-field" id="amaoundPaid" />
+                                <input type="text" class="form-control" value="@Model.PaymentViewModel.amountPaid" id="amaoundPaid" disabled="disabled" name="currency-field" />
                             </div>
                             <div class="form-group">
                                 <label for="exampleInputEmail3"> Ödenecek Tutar</label>
@@ -98,9 +102,7 @@
 
 <script>
 
-    //function myfocus(x) {
-    //    x.style.background = "yellow";
-    //}
+
     var totalPrice2 = document.getElementById('currency-field').value;
     var totalPrice3 = document.getElementById('amaoundPaid').value;
     var totalPrice4 = document.getElementById('odenecek').value;
@@ -131,7 +133,7 @@
         }
 
     });
-    $('#giveMany').keyup(function(event) {
+   $('#giveMany').keyup(function(event) {
 
         // skip for arrow keys
         if (event.which >= 37 && event.which <= 40) {
@@ -146,7 +148,6 @@
                 ;
         });
     });
-
 
 
 </script>

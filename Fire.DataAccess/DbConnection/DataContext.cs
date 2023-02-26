@@ -47,6 +47,7 @@ namespace Fire.DataAccess.DbConnection
         public DbSet<Receipt> Receipt { get; set; }
         public DbSet<ExpenseDetail> expenseDetails { get; set; }
         public DbSet<ExpenseCategoria> expenseCategorias { get; set; }
+        public DbSet<ProductPrices> productPrices{ get; set; }
 
     }
 }

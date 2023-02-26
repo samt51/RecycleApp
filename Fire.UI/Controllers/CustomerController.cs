@@ -26,8 +26,10 @@ namespace Fire.UI.Controllers
         private readonly IProductTypeService _productTypeService;
         private readonly IPaymentContService _paymentContService;
         private readonly IReceiptService _receiptService;
-        public CustomerController(IPaymentContService paymentContService, IProductQuantityService productQuantityService, IProductTypeService productTypeService, ICustomerService customerService, IReceiptService receiptService)
+        private readonly IProductPricesService _productPricesService;
+        public CustomerController(IProductPricesService productPricesService, IPaymentContService paymentContService, IProductQuantityService productQuantityService, IProductTypeService productTypeService, ICustomerService customerService, IReceiptService receiptService)
         {
+            _productPricesService = productPricesService;
             _customerService = customerService;
             _productTypeService = productTypeService;
             _productQuantityService = productQuantityService;
@@ -180,7 +182,7 @@ namespace Fire.UI.Controllers
 
             var update = new ProductTypeUpdateDataModel
             {
-                 
+
                 customerid = Convert.ToInt32(customer),
                 date = date,
                 quantity = Convert.ToInt32(quantity)
@@ -223,7 +225,7 @@ namespace Fire.UI.Controllers
             string[] val = quantity.Split(',');
             int receiptId = Convert.ToInt32(val[0]);
             decimal amaountPaid = decimal.Zero;
-            var receipt = _paymentContService.GetPaymentByPay(receiptId,true);
+            var receipt = _paymentContService.GetPaymentByPay(receiptId, true);
             if (receipt != null)
             {
                 amaountPaid = receipt.TotalPrice;
@@ -253,14 +255,14 @@ namespace Fire.UI.Controllers
                 TokenKeys = keys,
                 PaymentViewModel = new PaymentViewModel
                 {
-                    totalPrice = paymentlist.Sum(x => x.Totalprice),
-                    unPaid = paymentlist.Sum(x => x.Totalprice) - amaountPaid,
-                    amountPaid = amaountPaid,
+                    totalPrice = Convert.ToDouble(paymentlist.Sum(x => x.Totalprice)),
+                    unPaid = Convert.ToDouble(paymentlist.Sum(x => x.Totalprice) - amaountPaid),
+                    amountPaid = Convert.ToDouble(amaountPaid),
                 }
             });
         }
         [HttpPost]
-        public IActionResult FullPaid(string deger)
+        public IActionResult FullPaid(decimal deger)
         {
             var Authorization = HttpContext.Session.GetString("token");
             TokenKeys keys = AuthorizationCont.Authorization(Authorization);
@@ -270,16 +272,20 @@ namespace Fire.UI.Controllers
             var gelenprodutc = HttpContext.Session.GetString("entity");
             var deserilazeproduct = JsonConvert.DeserializeObject<ProductQauntityViewModel>(gelenprodutc);
             var datetime = new DateTime(deserilazeproduct.createdate.Year, deserilazeproduct.createdate.Month, deserilazeproduct.createdate.Day);
-            var payment = _paymentContService.GetPaymentByPay(deserilazeproduct.receiptId,true);
+            var payment = _paymentContService.GetPaymentByPay(deserilazeproduct.receiptId, true);
             var data = _productQuantityService.GetQuantityByReceiptBy(deserilazeproduct.receiptId);
             int success = 0;
             if (payment != null)
             {
-
-                if (value >= 1 && value <= payment.TotalPrice && payment.IsPaid == false)
+                decimal sum = payment.TotalPrice + value;
+                if (value >= 1 && sum <= data.Sum(x => x.Totalprice) && payment.IsPaid == false)
                 {
                     payment.TotalPrice += value;
                     var total = data.Sum(x => x.Totalprice);
+                    //if (Convert.ToDouble(value) < total)
+                    //{
+                    //   payment.TotalPrice = total - Convert.ToDouble(value);
+                    //}
                     if (payment.TotalPrice == total)
                     {
                         payment.IsPaid = true;
@@ -296,9 +302,9 @@ namespace Fire.UI.Controllers
                         paymentCont = payment,
                         PaymentViewModel = new PaymentViewModel
                         {
-                            totalPrice = data.Sum(x => x.Totalprice),
-                            unPaid = data.Sum(x => x.Totalprice) - payment.TotalPrice,
-                            amountPaid = payment.TotalPrice
+                            totalPrice = Convert.ToDouble(data.Sum(x => x.Totalprice)),
+                            unPaid = Convert.ToDouble(data.Sum(x => x.Totalprice) - payment.TotalPrice),
+                            amountPaid = Convert.ToDouble(payment.TotalPrice)
                         }
                     });
                 }
@@ -311,9 +317,9 @@ namespace Fire.UI.Controllers
                         paymentCont = payment,
                         PaymentViewModel = new PaymentViewModel
                         {
-                            totalPrice = data.Sum(x => x.Totalprice),
-                            unPaid = data.Sum(x => x.Totalprice) - payment.TotalPrice,
-                            amountPaid = payment.TotalPrice
+                            totalPrice = Convert.ToDouble(data.Sum(x => x.Totalprice)),
+                            unPaid = Convert.ToDouble(data.Sum(x => x.Totalprice) - payment.TotalPrice),
+                            amountPaid = Convert.ToDouble(payment.TotalPrice)
                         }
                     });
 
@@ -323,13 +329,13 @@ namespace Fire.UI.Controllers
                     ViewBag.success = "İşlem Başarılı";
                     return View(new AllLayoutViewModel
                     {
-                        TokenKeys=keys,
+                        TokenKeys = keys,
                         paymentCont = payment,
                         PaymentViewModel = new PaymentViewModel
                         {
-                            totalPrice = data.Sum(x => x.Totalprice),
-                            unPaid = data.Sum(x => x.Totalprice) - payment.TotalPrice,
-                            amountPaid = payment.TotalPrice
+                            totalPrice = Convert.ToDouble(data.Sum(x => x.Totalprice)),
+                            unPaid = Convert.ToDouble(data.Sum(x => x.Totalprice) - payment.TotalPrice),
+                            amountPaid = Convert.ToDouble(payment.TotalPrice)
                         }
                     });
                 }
@@ -340,17 +346,17 @@ namespace Fire.UI.Controllers
                     paymentCont = payment,
                     PaymentViewModel = new PaymentViewModel
                     {
-                        totalPrice = data.Sum(x => x.Totalprice),
-                        unPaid = data.Sum(x => x.Totalprice) - payment.TotalPrice,
-                        amountPaid = payment.TotalPrice
+                        totalPrice = Convert.ToDouble(data.Sum(x => x.Totalprice)),
+                        unPaid = Convert.ToDouble(data.Sum(x => x.Totalprice) - payment.TotalPrice),
+                        amountPaid = Convert.ToDouble(payment.TotalPrice)
                     }
                 });
 
             }
             else
             {
-                var total = data.Sum(x => x.Totalprice);
-                if (value >= 1 && value <= total)
+                var total = Convert.ToDouble(data.Sum(x => x.Totalprice));
+                if (value >= 1 && Convert.ToDouble(value) <= total)
                 {
                     var entity = new PaymentCont
                     {
@@ -363,7 +369,7 @@ namespace Fire.UI.Controllers
                         IsWhat = true
                     };
 
-                    if (entity.TotalPrice == total)
+                    if (Convert.ToDouble( entity.TotalPrice )== total)
                     {
                         entity.IsPaid = true;
                     }
@@ -380,15 +386,15 @@ namespace Fire.UI.Controllers
                         paymentCont = payment,
                         PaymentViewModel = new PaymentViewModel
                         {
-                            totalPrice = data.Sum(x => x.Totalprice),
-                            unPaid = data.Sum(x => x.Totalprice),
+                            totalPrice = Convert.ToDouble(data.Sum(x => x.Totalprice)),
+                            unPaid = Convert.ToDouble(data.Sum(x => x.Totalprice)),
                             amountPaid = 0
                         }
                     });
                 }
                 if (success == 1)
                 {
-                    payment = _paymentContService.GetPaymentByPay(deserilazeproduct.receiptId,true);
+                    payment = _paymentContService.GetPaymentByPay(deserilazeproduct.receiptId, true);
                     ViewBag.success = "İşlem Başarılı";
                     return View(new AllLayoutViewModel
                     {
@@ -396,9 +402,9 @@ namespace Fire.UI.Controllers
                         paymentCont = payment,
                         PaymentViewModel = new PaymentViewModel
                         {
-                            totalPrice = data.Sum(x => x.Totalprice),
-                            unPaid = data.Sum(x => x.Totalprice) - payment.TotalPrice,
-                            amountPaid = payment.TotalPrice
+                            totalPrice = Convert.ToDouble(data.Sum(x => x.Totalprice)),
+                            unPaid = Convert.ToDouble(data.Sum(x => x.Totalprice) - payment.TotalPrice),
+                            amountPaid = Convert.ToDouble(payment.TotalPrice)
                         }
                     });
                 }
@@ -411,9 +417,9 @@ namespace Fire.UI.Controllers
                 paymentCont = payment,
                 PaymentViewModel = new PaymentViewModel
                 {
-                    totalPrice = data.Sum(x => x.Totalprice),
-                    unPaid = data.Sum(x => x.Totalprice) - (payment == null ? 0 : payment.TotalPrice),
-                    amountPaid = payment == null ? 0 : payment.TotalPrice,
+                    totalPrice = Convert.ToDouble(data.Sum(x => x.Totalprice)),
+                    unPaid = Convert.ToDouble(data.Sum(x => x.Totalprice) - (payment == null ? 0 : payment.TotalPrice)),
+                    amountPaid = Convert.ToDouble(payment == null ? 0 : payment.TotalPrice),
                 }
             });
 
@@ -460,7 +466,7 @@ namespace Fire.UI.Controllers
                     deneme.Add(item);
                 }
             }
- 
+
 
             double money = 00.0;
             var ss = new List<ProductQuantity>();
@@ -493,7 +499,7 @@ namespace Fire.UI.Controllers
                         }
 
                     }
-                     quantityentity.productId = productType.FirstOrDefault(x => x.id == item).id;
+                    quantityentity.productId = productType.FirstOrDefault(x => x.id == item).id;
                     quantityentity.name = String.Concat(productType.FirstOrDefault(x => x.id == item).Name, ",", data.Select(x => x.UnitPrice).FirstOrDefault());
                     quantityentity.total = data.Sum(x => x.Totalprice);
                     quantityentity.price = data.Select(x => x.UnitPrice).FirstOrDefault();
@@ -501,11 +507,11 @@ namespace Fire.UI.Controllers
                 }
                 else
                 {
-
+                    var productPrice = _productPricesService.GetPriceByProductId(item, true);
                     quantityentity.productId = productType.FirstOrDefault(x => x.id == item).id;
-                    quantityentity.name = String.Concat(productType.FirstOrDefault(x => x.id == item).Name, ",", productType.FirstOrDefault(x => x.id == item).kgPrice);
+                    quantityentity.name = String.Concat(productType.FirstOrDefault(x => x.id == item).Name, ",", productPrice.Price);
                     quantityentity.total = 0;
-                    quantityentity.price = productType.FirstOrDefault(x => x.id == item).kgPrice;
+                    quantityentity.price = Convert.ToDecimal(productPrice.Price);
                     quantityentity.productQuantities = new List<ProductQuantity>();
                 }
 
@@ -514,7 +520,64 @@ namespace Fire.UI.Controllers
 
             }
             ViewBag.totalMoney = money;
-            return quantityList.OrderBy(x=>x.productId).ToList();
+            return quantityList.OrderBy(x => x.productId).ToList();
+
+        }
+        [HttpGet]
+        public IActionResult SetPriceByProductId(int id)
+        {
+            var Authorization = HttpContext.Session.GetString("token");
+            TokenKeys keys = AuthorizationCont.Authorization(Authorization);
+            if (keys == null)
+                return Redirect("/Error/401");
+            var data = _productTypeService.GetById(id);
+            if (data == null)
+            {
+                ViewBag.error = "Ürün Bulunamadı";
+                return View();
+            }
+            var price = _productPricesService.GetPriceByProductId(id, true);
+
+            return View(new AllLayoutViewModel
+            {
+                TokenKeys = keys,
+                productPriceByProduct = new ProductPriceByProduct
+                {
+                    Price = price != null ? price.Price.Replace(",", ".") : "0",
+                    Name = data.Name
+                }
+            });
+        }
+        [HttpPost]
+        public IActionResult SetPriceByProductId(AllLayoutViewModel request, int i)
+        {
+            var Authorization = HttpContext.Session.GetString("token");
+            TokenKeys keys = AuthorizationCont.Authorization(Authorization);
+            if (keys == null)
+                return Redirect("/Error/401");
+            var id = HttpContext.Request.RouteValues["id"];
+            var price = _productPricesService.GetPriceByProductId(Convert.ToInt32(id), true);
+            if (price == null)
+            {
+                var entity = new ProductPrices
+                {
+                    IsWhat = true,
+                    Price = request.productPriceByProduct.Price.Replace(",", "."),
+                    ProductId = Convert.ToInt32(id),
+                };
+                _productPricesService.Create(entity);
+                return RedirectToAction("List", "ProductType");
+            }
+            if (request.productPriceByProduct.Price != price.Price)
+            {
+                price.İsDelete = true;
+                _productPricesService.Update(price);
+                price.Id = 0;
+                price.Price = request.productPriceByProduct.Price.Replace(",", ".");
+                _productPricesService.Create(price);
+            }
+
+            return RedirectToAction("List", "ProductType");
 
         }
     }

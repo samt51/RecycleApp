@@ -26,16 +26,22 @@
                                 <thead>
                                     <tr>
                                         <td class="whiteColor">Ürün</td>
-                                        <td class="whiteColor">Fiyat</td>
+                                        <td class="whiteColor"> Alış Fiyat</td>
+                                        <td class="whiteColor"> Satış Fiyat</td>
 
                                     </tr>
                                     @foreach (var customer in Model.productTypes)
                                     {
                                         <tr class="Search">
                                             <td class="whiteColor">@customer.Name</td>
-                                            <td class="whiteColor deneme">@customer.kgPrice</td>
+                                            <td class="whiteColor">@Functions.PriceToProduct(customer.id,true)</td>
+                                            <td class="whiteColor">@Functions.PriceToProduct(customer.id,false)</td>
+
                                             <td style="text-align:right">
                                                 <a href="/ProductType/Update/@CommondMethod.ConvertToEncrypt(@customer.id.ToString())" name="id" class="btn btn-warning" style="margin-right:6px !important;" title="Edit">Güncelle</a>
+                                                <a href="/Customer/SetPriceByProductId/@customer.id" name="id" class="btn btn-success" style="margin-right:6px !important;" title="Edit">Alış</a>
+                                                <a href="/Factory/SetPriceByProductId/@customer.id" name="id" class="btn btn-success" style="margin-right:6px !important;" title="Edit">Satış</a>
+
                                                 @*  <form action="/ProductType/Delete" method="post" style="display:inline">
                                             <input type="hidden" name="id" value="@customer.id" />
                                             <button type="submit" class="btn-sm btn-danger" style="margin-right:6px !important;" data-type="confirm" title="Delete">Sil</button>
@@ -67,13 +73,10 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
 
-    var deneme = document.getElementsByClassName("deneme");
 
 
-    for (var j = 0; j < deneme.length; j++) {
-        deneme[j].innerHTML = formatMyMoney(deneme[j].innerHTML) + " " + "₺";
-    }
 
+  
 
     $(document).ready(function() {
         function Contains(text_one, text_two) {
@@ -94,20 +97,6 @@
     })
 
 
-    function formatMyMoney(price) {
-
-        var currency_symbol = "₺"
-
-        var formattedOutput = new Intl.NumberFormat('tr-TR', {
-            style: 'currency',
-            currency: 'TRY',
-            minimumFractionDigits: 2,
-        });
-
-        return formattedOutput.format(price).replace(currency_symbol, '')
-    }
-
-
-
+ 
 
 </script>

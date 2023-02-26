@@ -18,9 +18,9 @@ namespace Fire.Business.Concrete
             return _productTypeDal.GetAll();
         }
 
-        public void Create(ProductType entity)
+        public ProductType Create(ProductType entity)
         {
-            _productTypeDal.Create(entity);
+          return  _productTypeDal.Create(entity);
         }
 
         public void Delete(ProductType entity)

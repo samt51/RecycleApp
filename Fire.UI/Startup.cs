@@ -130,6 +130,9 @@ namespace Fire.UI
 
             services.AddScoped<IReceiptDal, EfReceiptDal>();
             services.AddTransient<IReceiptService, ReceiptManager>();
+
+            services.AddScoped<IProductPricesDal, EfProductPricesDal>();
+            services.AddTransient<IProductPricesService, ProductPricesManager>();
             #endregion
         }
 

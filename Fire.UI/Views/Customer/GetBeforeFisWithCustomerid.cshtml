@@ -31,7 +31,7 @@
                                     {
                                         <tr class="Search">
                                             <td></td>
-                                            <td>@customer.createdate.ToString("ddd-MM-yyyy")</td>
+                                            <td>@customer.createdate.ToString("dd-MM-yyyy")</td>
                                             <td>@customer.quantity</td>
                                             <td style="text-align:right">
                                                 <a href="/Customer/GetFisByid/?quantity=@CommondMethod.ConvertToEncrypt(@customer.quantity+","+@customer.createdate.ToShortDateString())" name="id" class="btn btn-inverse-success btn-fw btn-sm">Göster</a>
